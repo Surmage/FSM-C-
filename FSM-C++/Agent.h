@@ -4,6 +4,7 @@
 #include "Idle.h"
 #include <vector>
 #include <tuple>
+#include <algorithm>
 using namespace std;
 struct Agent
 {
@@ -53,7 +54,7 @@ struct Agent
         s = NULL;
         //s = telegram.changeState(1, s, this);
         this->name = name;
-        s->Enter(name);
+        s->Enter(this);
         type = s->type;
         //hour = im.getHour();
     }
@@ -61,7 +62,7 @@ struct Agent
     // Update is called once per frame
     void Update()
     {
-        s->Execute(name);
+        s->Execute(this);
         type = s->type;
         //hour = im.getHour();
         if (fullness <= 0 || thirst <= 0)
@@ -71,7 +72,7 @@ struct Agent
                 //Debug.Log("Died with this type: " + type + " and status: " + status);
                 status = "Dead";
                 //s = telegram.changeState(status, s, this);
-                s->Enter(name);
+                s->Enter(this);
             }
         }
         if (fullness < 0)
@@ -252,13 +253,13 @@ struct Agent
     void enterState()
     {
         //s = telegram.GetComponent<Telegram>().changeState(status, s, this);
-        s->Enter(name);
+        s->Enter(this);
         type = s->type;
     }
     void enterSocial()
     {
         //s = telegram.GetComponent<Telegram>().changeState(4, s, this);
-        s->Enter(name);
+        s->Enter(this);
         type = s->type;
     }
 
@@ -358,32 +359,33 @@ struct Agent
     string isAnythingLow()
     {
         vector<tuple<float, string>> arrs;
-        arrs =
-        {
-            (thirst, "Thirsty"), (energy, "Sleepy"), (fullness, "Hungry"), (money, "Poor"), (happiness, "Bored")
-        };
+        arrs.push_back(tuple<float, string>(thirst, "Thirsty")); 
+        arrs.push_back(tuple<float, string>(energy, "Sleepy"));
+        arrs.push_back(tuple<float, string>(fullness, "Hungry"));
+        arrs.push_back(tuple<float, string>(money, "Poor"));
+        arrs.push_back(tuple<float, string>(happiness, "Bored"));
 
         //Remove possibility of entering states if should be impossible
 
         if (!canSocial || money < 1000) //remove entering social as an option
         {
-            arrs.RemoveAt(4);
+            arrs.pop_back();
         }
         if (needRepair && money < 1700) //remove mining as an option
         {
-            arrs.RemoveAt(3);
+            arrs.erase(arrs.begin() + 3);
         }
         else if (energy <= 1000 || happiness <= 1000) //remove mining as an option too
         {
-            arrs.RemoveAt(3);
+            arrs.erase(arrs.begin() + 3);
         }
-        if (arrs[2].Item1 <= 1000 && money < 200) //check if hungry and poor
+        if (fullness <= 1000 && money < 200) //check if hungry and poor
         {
             if (timesAskedForHelp <= 4) //can only receive money for food 4 times before friends stop
             {
                 if (!telegram.askForMoney(this)) //remove entering eating as an option
                 {
-                    arrs.RemoveAt(2);
+                    arrs.erase(arrs.begin() + 2);
                 }
                 else
                 {
@@ -393,15 +395,15 @@ struct Agent
             }
             else
             {
-                arrs.RemoveAt(2); //didn't receive money, can't afford food
+                arrs.erase(arrs.begin() + 2); //didn't receive money, can't afford food
             }
         }
-        arrs.Sort();
+        sort(arrs.begin(), arrs.end()); //sort
 
         //Return stat that is the lowest
-        if (arrs[0].Item1 <= 1000)
+        if (get<0>(arrs[0]) <= 1000)
         {
-            return arrs[0].Item2;
+            return get<1>(arrs[0]);
         }
 
         else
@@ -449,7 +451,7 @@ struct Agent
         return status;
     }
 
-    private bool compareStatusType()
+    bool compareStatusType()
     {
         //Checks if type fits with status, for example: is the agent eating because they are hungry? Is the agent sleeping because they are sleepy?
         if (status == "Hungry")
@@ -536,17 +538,17 @@ struct Agent
         return false;
     }
 
-    public IEnumerator setCanSocial(float waitTime)
-    {
-        //Set canSocial variable with a timer 
-        if (canSocial)
-        {
-            canSocial = false;
+    //public IEnumerator setCanSocial(float waitTime)
+    //{
+    //    //Set canSocial variable with a timer 
+    //    if (canSocial)
+    //    {
+    //        canSocial = false;
 
-            WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed()); //Cooldown on canSocial
-            yield return wait;
-            canSocial = true;
-        }
-    }
+    //        WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed()); //Cooldown on canSocial
+    //        yield return wait;
+    //        canSocial = true;
+    //    }
+    //}
 
 };

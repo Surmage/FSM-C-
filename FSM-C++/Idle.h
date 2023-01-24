@@ -3,25 +3,22 @@
 
 struct Idle : State
 {
-    virtual void Execute(string name)
+    virtual void Execute(Agent* agent)
     {
         //Change stat variables
-        //speed = im.speed;
-     /*   agent = GameObject.Find(name);
-        var agentBehavior = agent.GetComponent<AgentBehavior>();
-        agentBehavior.changeEnergy(energyChangeVal * speed);
-        agentBehavior.changeHunger(-0.3f * speed);
-        agentBehavior.changeThirst(-1f * speed);
-        agentBehavior.changeHappiness(-0.1f * speed);*/
+        agent->changeEnergy(energyChangeVal * speed);
+        agent->changeHunger(-0.3f * speed);
+        agent->changeThirst(-1.0f * speed);
+        agent->changeHappiness(-0.1f * speed);
     }
-    virtual void Enter(string name)
+    virtual void Enter(Agent* agent)
     {
         //Debug.Log(name + " entering Idle state");
         //setStartValues("idling around");
 
     }
 
-    virtual string Exit(string name)
+    virtual string Exit(Agent* agent)
     {
         //Debug.Log(name + " exiting Gather state");
         return dateWith;

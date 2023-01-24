@@ -129,7 +129,9 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Idle.h" />
+    <ClInclude Include="InterfaceManager.h" />
     <ClInclude Include="state.h" />
+    <ClInclude Include="Telegram.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cc" />
