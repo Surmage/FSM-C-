@@ -128,8 +128,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
+    <ClInclude Include="dead.h" />
+    <ClInclude Include="drink.h" />
+    <ClInclude Include="eat.h" />
+    <ClInclude Include="gather.h" />
     <ClInclude Include="Idle.h" />
+    <ClInclude Include="Inclusions.h" />
     <ClInclude Include="InterfaceManager.h" />
+    <ClInclude Include="mining.h" />
+    <ClInclude Include="sleep.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="Telegram.h" />
   </ItemGroup>

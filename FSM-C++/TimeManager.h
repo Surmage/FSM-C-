@@ -4,6 +4,9 @@ struct TimeManager {
     TimeManager() {
         time = 0;
     }
+    void updateTime(float framesPassed) {
+        time = framesPassed;
+    }
     int getDay()
     {
         //24 hours in a day, 60 minutes per, 60 seconds per, 
@@ -22,11 +25,5 @@ struct TimeManager {
             hour = hour - 24 * getDay();
         }
         return hour;
-    }
-    void clock(float time)
-    {
-        int day = getDay();
-        float hour = getHour();
-        //timeText.text = "Day: " + (day + 1).ToString() + " Hour: " + hour.ToString("#");
     }
 };

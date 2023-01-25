@@ -1,10 +1,11 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "Idle.h"
+#include "Inclusions.h"
 #include <vector>
 #include <tuple>
 #include <algorithm>
+#include <ctime>
 using namespace std;
 struct Agent
 {
@@ -39,9 +40,10 @@ struct Agent
         status = "";
         needRepair = false;
         //randomize start values
-        float startValue1 = Random.Range(4000, 8000);
+        srand(time(NULL)); //reset rng seed
+        float startValue1 = 4000 + rand() % 4001; //random between 4000 and 8000
         float startValue2 = 2000;
-        float startValue3 = Random.Range(4000, 8000);
+        float startValue3 = 4000 + rand() % 4001;
         fullness = startValue1;
         thirst = startValue1;
         energy = startValue2;
@@ -262,7 +264,91 @@ struct Agent
         s->Enter(this);
         type = s->type;
     }
+    State *getState(string message, State* s, Agent* caller)
+    {
+        //Plan to socialize
+        if (message == "Bored" && caller->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
+        {
+            if (caller->money >= 1000) //If not broke
+            {
+                if (s->type != "Social") //If not already socializing
+                {
+                    for (int i = 0; i < 4; i++) //Check through all agents
+                    {
+                        if (caller->name != v[i].name) //Check that caller isn't asking themselves to hang out
+                        {
+                            if (dispatchMessage(0, caller->name, v[i].name, "") == "Yes") //If agent says yes
+                            {
+                                v[i].s.setDate(caller); //Plan date
+                            }
+                        }
+                    }
+                    //Make unable to socialize for 10 seconds (affected by speed variable)
+                    setCanSocial();
+                    //Find new state to enter
+                    message = caller->isAnythingLow();
+                }
 
+            }
+            else
+            {
+                //Make unable to socialize for 10 seconds (affected by speed variable)
+                caller->setCanSocial();
+                //Find new state to enter
+                message = caller->isAnythingLow();
+            }
+        }
+        //Enter eat state
+        if (message == "Hungry")
+        {
+            s = new Eat;
+            return s;
+
+        }
+        //Enter sleep state
+        if (message == "Sleepy")
+        {
+            s = new Sleep;
+            return s;
+
+        }
+        //Enter drink state
+        if (message == "Thirsty")
+        {
+            s = new Drink;
+            return s;
+
+        }
+        //Enter gather state
+        if (message == "Motivated")
+        {
+            s = new Gather;
+            return s;
+
+        }
+        //Enter idle state
+        if (message == "Fine")
+        {
+            s = new Idle;
+            return s;
+
+        }
+        //Enter mining state
+        if (message == "Poor")
+        {
+            s = new Mining;
+            return s;
+
+        }
+        //Enter dead state
+        if (message == "Dead")
+        {
+            s = new Dead;
+            return s;
+        }
+        return s;
+    }
+    
     bool amIFine()
     {
         //Check if state main stat is high enough to exit
@@ -411,7 +497,8 @@ struct Agent
             //Enter Idle or Gathering 
             if (happiness >= 0)
             {
-                float mood = Random.Range(0, 3);
+                srand(time(NULL)); //reset rng seed
+                float mood = rand() % 3;
                 if (mood == 2)
                 {
                     if (status != "Fine")
@@ -538,17 +625,9 @@ struct Agent
         return false;
     }
 
-    //public IEnumerator setCanSocial(float waitTime)
-    //{
-    //    //Set canSocial variable with a timer 
-    //    if (canSocial)
-    //    {
-    //        canSocial = false;
-
-    //        WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed()); //Cooldown on canSocial
-    //        yield return wait;
-    //        canSocial = true;
-    //    }
-    //}
+    void setCanSocial()
+    {
+        canSocial = !canSocial;
+    }
 
 };

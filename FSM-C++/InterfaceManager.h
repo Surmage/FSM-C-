@@ -70,4 +70,10 @@ struct InterfaceManager
         messagesText.text += msg;
         messagesText.text += "\n";
     }
+    void clock(float time)
+    {
+        int day = getDay();
+        float hour = getHour();
+        //timeText.text = "Day: " + (day + 1).ToString() + " Hour: " + hour.ToString("#");
+    }
 };
