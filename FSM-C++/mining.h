@@ -28,10 +28,9 @@ struct Mining : State
         }
     }
 
-    virtual string Exit(Agent* agent)
+    virtual void Exit(Agent* agent)
     {
         //Debug.Log(name + " exiting Gather state");
-        return dateWith;
 
     }
 };

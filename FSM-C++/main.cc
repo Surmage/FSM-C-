@@ -1,11 +1,10 @@
-#include "Idle.h"
 #include "Agent.h"
 #include <iostream>
 using namespace std;
 
 int main(int arg, char* args[])
 {
-	Idle s;
+	Idle s;	
 	vector<Agent>v;
 	//create actor 1
 	Agent a;
@@ -19,7 +18,27 @@ int main(int arg, char* args[])
 	//create actor 4
 	Agent d;
 	v.push_back(d);
+	Telegram t(v);
+	TimeManager h;
 
-	cout << "hello world";
+	//Give agents a phone
+	a.setPhone(&t);
+	b.setPhone(&t);
+	c.setPhone(&t);
+	d.setPhone(&t);
+
+	//Give agents a clock
+	a.setClock(&h);
+	b.setClock(&h);
+	c.setClock(&h);
+	d.setClock(&h);
+
+	while (true) {
+		h.updateTime(1);
+		a.Update();
+		b.Update();
+		c.Update();
+		d.Update();
+	}
 	return 1;
 }

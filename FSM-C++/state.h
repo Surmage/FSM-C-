@@ -17,7 +17,7 @@ struct State
 
     virtual void Execute(Agent* agent) = 0;
 
-    virtual string Exit(Agent* agent) = 0;
+    virtual void Exit(Agent* agent) = 0;
 
     State() {
 
@@ -26,7 +26,7 @@ struct State
     {
         //manager = GameObject.Find("InterfaceManager");
         //im = manager.GetComponent<InterfaceManager>();
-        //speed = im.speed;
+        speed = 1;
         this->type = type;
         dateWith = "";
         energyChangeVal = -0.22f;

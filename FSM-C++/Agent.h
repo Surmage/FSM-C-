@@ -6,6 +6,8 @@
 #include <tuple>
 #include <algorithm>
 #include <ctime>
+#include "Telegram.h"
+#include "TimeManager.h"
 using namespace std;
 struct Agent
 {
@@ -21,13 +23,11 @@ struct Agent
     bool canSocial;
     State* s;
     bool needRepair;
+    Telegram* phone;
+    TimeManager* clock;
     int timesAskedForHelp;
-    /*GameObject messageDispatcher;
-    Telegram telegram;
-    GameObject interfaceManager;
-    InterfaceManager im;
-    GameObject state;*/
     float hour;
+    tuple<float, Agent*>date;
     // Start is called before the first frame update
     Agent() {
 
@@ -37,7 +37,7 @@ struct Agent
         timesAskedForHelp = 0;
         canSocial = true;
         busy = false;
-        status = "";
+        status = "sleepy";
         needRepair = false;
         //randomize start values
         srand(time(NULL)); //reset rng seed
@@ -49,16 +49,12 @@ struct Agent
         energy = startValue2;
         money = startValue3;
         happiness = startValue3;
-        /*messageDispatcher = GameObject.Find("MessageDispatcher");
-        telegram = messageDispatcher.GetComponent<Telegram>();
-        interfaceManager = GameObject.Find("InterfaceManager");
-        im = interfaceManager.GetComponent<InterfaceManager>();*/
-        s = NULL;
-        //s = telegram.changeState(1, s, this);
-        this->name = name;
-        s->Enter(this);
+        phone = new Telegram;
+        clock = new TimeManager;
+        enterState();
         type = s->type;
-        //hour = im.getHour();
+        date = std::make_tuple(0.0f, this);
+        hour = 0;
     }
 
     // Update is called once per frame
@@ -72,8 +68,9 @@ struct Agent
             if (status != "Dead")
             {
                 //Debug.Log("Died with this type: " + type + " and status: " + status);
+                delete s;
                 status = "Dead";
-                //s = telegram.changeState(status, s, this);
+                s = getState(status);
                 s->Enter(this);
             }
         }
@@ -109,13 +106,17 @@ struct Agent
         {
             happiness = 8000;
         }
-        if (hour == 0)
+        hour = clock->getHour();
+        if (hour == 22)
         {
             canSocial = false;
         }
         if (hour == 8)
         {
             canSocial = true;
+        }
+        if (get<0>(date) == hour) {
+            startToSocial();
         }
     }
     void changeHunger(float change)
@@ -254,48 +255,54 @@ struct Agent
     }
     void enterState()
     {
-        //s = telegram.GetComponent<Telegram>().changeState(status, s, this);
+        delete s;
+        s = getState(status);
         s->Enter(this);
         type = s->type;
     }
-    void enterSocial()
+
+    void startToSocial()
     {
-        //s = telegram.GetComponent<Telegram>().changeState(4, s, this);
+        delete s;
+        s = new Social;
         s->Enter(this);
         type = s->type;
+
     }
-    State *getState(string message, State* s, Agent* caller)
+    State *getState(string message)
     {
+        State* s;
         //Plan to socialize
-        if (message == "Bored" && caller->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
+        if (message == "Bored" && this->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
         {
-            if (caller->money >= 1000) //If not broke
+            if (this->money >= 1000) //If not broke
             {
                 if (s->type != "Social") //If not already socializing
                 {
                     for (int i = 0; i < 4; i++) //Check through all agents
                     {
-                        if (caller->name != v[i].name) //Check that caller isn't asking themselves to hang out
+                        if (this->name != phone->getAgent(i).name) //Check that caller isn't asking themselves to hang out
                         {
-                            if (dispatchMessage(0, caller->name, v[i].name, "") == "Yes") //If agent says yes
+                            if (phone->dispatchMessage(0, this, &phone->getAgent(i), "") == "Yes") //If agent says yes
                             {
-                                v[i].s.setDate(caller); //Plan date
+                                this->date = make_tuple(clock->getHour() + 2, &phone->getAgent(i));
+                                phone->getAgent(i).date = make_tuple(clock->getHour() +2, this); //Plan date
                             }
                         }
                     }
                     //Make unable to socialize for 10 seconds (affected by speed variable)
-                    setCanSocial();
+                    setCanSocial(false);
                     //Find new state to enter
-                    message = caller->isAnythingLow();
+                    message = this->isAnythingLow();
                 }
 
             }
             else
             {
                 //Make unable to socialize for 10 seconds (affected by speed variable)
-                caller->setCanSocial();
+                this->setCanSocial(false);
                 //Find new state to enter
-                message = caller->isAnythingLow();
+                message = this->isAnythingLow();
             }
         }
         //Enter eat state
@@ -389,7 +396,7 @@ struct Agent
         }
         if (s->type == "socializing")
         {
-            if (happiness >= 8000)
+            if (happiness >= 8000 && get<1>(date)->happiness >= 8000)
             {
                 return true;
             }
@@ -469,7 +476,7 @@ struct Agent
         {
             if (timesAskedForHelp <= 4) //can only receive money for food 4 times before friends stop
             {
-                if (!telegram.askForMoney(this)) //remove entering eating as an option
+                if (!phone->askForMoney(this)) //remove entering eating as an option
                 {
                     arrs.erase(arrs.begin() + 2);
                 }
@@ -625,9 +632,14 @@ struct Agent
         return false;
     }
 
-    void setCanSocial()
+    void setCanSocial(bool value)
     {
-        canSocial = !canSocial;
+        canSocial = value;
     }
-
+    void setPhone(Telegram* t) {
+        phone = t;
+    }
+    void setClock(TimeManager* h) {
+        clock = h;
+    }
 };
