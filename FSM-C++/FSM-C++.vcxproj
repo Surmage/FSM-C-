@@ -128,20 +128,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
-    <ClInclude Include="dead.h" />
-    <ClInclude Include="drink.h" />
-    <ClInclude Include="eat.h" />
-    <ClInclude Include="gather.h" />
-    <ClInclude Include="Idle.h" />
-    <ClInclude Include="Inclusions.h" />
     <ClInclude Include="InterfaceManager.h" />
-    <ClInclude Include="mining.h" />
-    <ClInclude Include="sleep.h" />
-    <ClInclude Include="state.h" />
+    <ClInclude Include="States.h" />
     <ClInclude Include="Telegram.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Agent.cc" />
     <ClCompile Include="main.cc" />
+    <ClCompile Include="States.cc" />
+    <ClCompile Include="Telegram.cc" />
+    <ClCompile Include="TimeManager.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

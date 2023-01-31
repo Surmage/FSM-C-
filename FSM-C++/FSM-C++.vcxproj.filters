@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="state.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Idle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Agent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -30,30 +24,24 @@
     <ClInclude Include="InterfaceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sleep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="eat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mining.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gather.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dead.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="drink.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Inclusions.h">
+    <ClInclude Include="States.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Agent.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Telegram.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="States.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

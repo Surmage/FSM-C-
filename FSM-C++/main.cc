@@ -7,25 +7,27 @@ int main(int arg, char* args[])
 	Idle s;	
 	vector<Agent>v;
 	//create actor 1
-	Agent a;
+	Agent a("name");
 	v.push_back(a);
 	//create actor 2
-	Agent b;
+	Agent b("name2");
 	v.push_back(b);
 	//create actor 3
-	Agent c;
+	Agent c("name3");
 	v.push_back(c);
 	//create actor 4
 	Agent d;
 	v.push_back(d);
-	Telegram t(v);
+	Telegram t(&a, &b, &c, &d);
 	TimeManager h;
+	//t.getValue(1);
+	//t.getValue(3);
 
 	//Give agents a phone
-	a.setPhone(&t);
-	b.setPhone(&t);
-	c.setPhone(&t);
-	d.setPhone(&t);
+	//a.setPhone(&t);
+	//b.setPhone(&t);
+	//c.setPhone(&t);
+	//d.setPhone(&t);
 
 	//Give agents a clock
 	a.setClock(&h);
@@ -33,12 +35,23 @@ int main(int arg, char* args[])
 	c.setClock(&h);
 	d.setClock(&h);
 
+	float prevFrame = 0;
+	float frames = 0;
 	while (true) {
-		h.updateTime(1);
-		a.Update();
+		//ImGui::ShowDemoWindow();
 		b.Update();
+		cout << b.type << endl;
+	/*	b.Update();
 		c.Update();
-		d.Update();
+		d.Update();*/
+		frames ++;
+		//std::cout << frames << std::endl;
+		float currentTime = frames;
+		float deltaTime = currentTime - prevFrame;
+		prevFrame = currentTime;
+		h.updateTime(deltaTime);
+		//cout << h.getDay() << " " << h.getHour() << endl;
 	}
+	cout << "hello world";
 	return 1;
 }

@@ -1,9 +1,0 @@
-#pragma once
-#include "Idle.h"
-#include "drink.h"
-#include "mining.h"
-#include "gather.h"
-#include "eat.h"
-#include "sleep.h"
-#include "dead.h"
-#include "Social.h"

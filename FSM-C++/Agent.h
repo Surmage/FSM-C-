@@ -1,14 +1,13 @@
 #pragma once
 #include <iostream>
-#include <string>
-#include "Inclusions.h"
 #include <vector>
 #include <tuple>
 #include <algorithm>
 #include <ctime>
 #include "Telegram.h"
 #include "TimeManager.h"
-using namespace std;
+#include "States.h"
+
 struct Agent
 {
     float fullness;
@@ -28,7 +27,6 @@ struct Agent
     int timesAskedForHelp;
     float hour;
     tuple<float, Agent*>date;
-    // Start is called before the first frame update
     Agent() {
 
     }
@@ -37,7 +35,6 @@ struct Agent
         timesAskedForHelp = 0;
         canSocial = true;
         busy = false;
-        status = "sleepy";
         needRepair = false;
         //randomize start values
         srand(time(NULL)); //reset rng seed
@@ -51,13 +48,15 @@ struct Agent
         happiness = startValue3;
         phone = new Telegram;
         clock = new TimeManager;
+        status = "Sleepy";
+        s = NULL;
         enterState();
         type = s->type;
         date = std::make_tuple(0.0f, this);
         hour = 0;
     }
-
-    // Update is called once per frame
+//
+//    // Update is called once per frame
     void Update()
     {
         s->Execute(this);
@@ -269,42 +268,42 @@ struct Agent
         type = s->type;
 
     }
-    State *getState(string message)
+    State* getState(string message)
     {
-        State* s;
+        State* s = NULL;
         //Plan to socialize
-        if (message == "Bored" && this->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
-        {
-            if (this->money >= 1000) //If not broke
-            {
-                if (s->type != "Social") //If not already socializing
-                {
-                    for (int i = 0; i < 4; i++) //Check through all agents
-                    {
-                        if (this->name != phone->getAgent(i).name) //Check that caller isn't asking themselves to hang out
-                        {
-                            if (phone->dispatchMessage(0, this, &phone->getAgent(i), "") == "Yes") //If agent says yes
-                            {
-                                this->date = make_tuple(clock->getHour() + 2, &phone->getAgent(i));
-                                phone->getAgent(i).date = make_tuple(clock->getHour() +2, this); //Plan date
-                            }
-                        }
-                    }
-                    //Make unable to socialize for 10 seconds (affected by speed variable)
-                    setCanSocial(false);
-                    //Find new state to enter
-                    message = this->isAnythingLow();
-                }
+        //if (message == "Bored" && this->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
+        //{
+        //    if (this->money >= 1000) //If not broke
+        //    {
+        //        if (s->type != "Social") //If not already socializing
+        //        {
+        //            for (int i = 0; i < 4; i++) //Check through all agents
+        //            {
+        //                if (this->name != phone->getAgent(i).name) //Check that caller isn't asking themselves to hang out
+        //                {
+        //                    if (phone->dispatchMessage(0, this, &phone->getAgent(i), "") == "Yes") //If agent says yes
+        //                    {
+        //                        this->date = make_tuple(clock->getHour() + 2, &phone->getAgent(i));
+        //                        phone->getAgent(i).date = make_tuple(clock->getHour() + 2, this); //Plan date
+        //                    }
+        //                }
+        //            }
+        //            //Make unable to socialize for 10 seconds (affected by speed variable)
+        //            setCanSocial(false);
+        //            //Find new state to enter
+        //            message = this->isAnythingLow();
+        //        }
 
-            }
-            else
-            {
-                //Make unable to socialize for 10 seconds (affected by speed variable)
-                this->setCanSocial(false);
-                //Find new state to enter
-                message = this->isAnythingLow();
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        //Make unable to socialize for 10 seconds (affected by speed variable)
+        //        this->setCanSocial(false);
+        //        //Find new state to enter
+        //        message = this->isAnythingLow();
+        //    }
+        //}
         //Enter eat state
         if (message == "Hungry")
         {
@@ -355,7 +354,7 @@ struct Agent
         }
         return s;
     }
-    
+
     bool amIFine()
     {
         //Check if state main stat is high enough to exit
@@ -452,7 +451,7 @@ struct Agent
     string isAnythingLow()
     {
         vector<tuple<float, string>> arrs;
-        arrs.push_back(tuple<float, string>(thirst, "Thirsty")); 
+        arrs.push_back(tuple<float, string>(thirst, "Thirsty"));
         arrs.push_back(tuple<float, string>(energy, "Sleepy"));
         arrs.push_back(tuple<float, string>(fullness, "Hungry"));
         arrs.push_back(tuple<float, string>(money, "Poor"));
@@ -476,15 +475,15 @@ struct Agent
         {
             if (timesAskedForHelp <= 4) //can only receive money for food 4 times before friends stop
             {
-                if (!phone->askForMoney(this)) //remove entering eating as an option
-                {
-                    arrs.erase(arrs.begin() + 2);
-                }
-                else
-                {
-                    timesAskedForHelp++;
-                    return "Hungry"; //eating will be the next state
-                }
+                //if (!phone->askForMoney(this)) //remove entering eating as an option
+                //{
+                //    arrs.erase(arrs.begin() + 2);
+                //}
+                //else
+                //{
+                //    timesAskedForHelp++;
+                //    return "Hungry"; //eating will be the next state
+                //}
             }
             else
             {

@@ -5,7 +5,7 @@ struct TimeManager {
         time = 0;
     }
     void updateTime(float framesPassed) {
-        time = framesPassed;
+        time += framesPassed;
     }
     int getDay()
     {
