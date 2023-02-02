@@ -15,9 +15,9 @@ struct Agent
     float energy;
     float money;
     float happiness;
-    string type;
-    string status;
-    string name;
+    std::string type;
+    std::string status;
+    std::string name;
     bool busy;
     bool canSocial;
     State* s;
@@ -26,11 +26,11 @@ struct Agent
     TimeManager* clock;
     int timesAskedForHelp;
     float hour;
-    tuple<float, Agent*>date;
+    std::tuple<float, Agent*>date;
     Agent() {
 
     }
-    Agent(string name)
+    Agent(std::string name)
     {
         timesAskedForHelp = 0;
         canSocial = true;
@@ -268,7 +268,7 @@ struct Agent
         type = s->type;
 
     }
-    State* getState(string message)
+    State* getState(std::string message)
     {
         State* s = NULL;
         //Plan to socialize
@@ -448,14 +448,14 @@ struct Agent
         }
         return false;
     }
-    string isAnythingLow()
+    std::string isAnythingLow()
     {
-        vector<tuple<float, string>> arrs;
-        arrs.push_back(tuple<float, string>(thirst, "Thirsty"));
-        arrs.push_back(tuple<float, string>(energy, "Sleepy"));
-        arrs.push_back(tuple<float, string>(fullness, "Hungry"));
-        arrs.push_back(tuple<float, string>(money, "Poor"));
-        arrs.push_back(tuple<float, string>(happiness, "Bored"));
+        std::vector<std::tuple<float, std::string>> arrs;
+        arrs.push_back(std::tuple<float, std::string>(thirst, "Thirsty"));
+        arrs.push_back(std::tuple<float, std::string>(energy, "Sleepy"));
+        arrs.push_back(std::tuple<float, std::string>(fullness, "Hungry"));
+        arrs.push_back(std::tuple<float, std::string>(money, "Poor"));
+        arrs.push_back(std::tuple<float, std::string>(happiness, "Bored"));
 
         //Remove possibility of entering states if should be impossible
 

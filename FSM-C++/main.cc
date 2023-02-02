@@ -1,11 +1,22 @@
 #include "Agent.h"
 #include <iostream>
-using namespace std;
+#include "gui.h"
+#include <thread>
 
-int main(int arg, char* args[])
+int __stdcall wWinMain(
+	HINSTANCE instance,
+	HINSTANCE previousInstance,
+	PWSTR arguments,
+	int commandShow)
 {
+	// create gui
+	gui::CreateHWindow("FSM");
+	gui::CreateDevice();
+	gui::CreateImGui();
+	int x = 0;
+
 	Idle s;	
-	vector<Agent>v;
+	std::vector<Agent>v;
 	//create actor 1
 	Agent a("name");
 	v.push_back(a);
@@ -16,7 +27,7 @@ int main(int arg, char* args[])
 	Agent c("name3");
 	v.push_back(c);
 	//create actor 4
-	Agent d;
+	Agent d("name4");
 	v.push_back(d);
 	Telegram t(&a, &b, &c, &d);
 	TimeManager h;
@@ -37,21 +48,32 @@ int main(int arg, char* args[])
 
 	float prevFrame = 0;
 	float frames = 0;
-	while (true) {
-		//ImGui::ShowDemoWindow();
+
+	while (gui::isRunning)
+	{
+		a.Update();
 		b.Update();
-		cout << b.type << endl;
-	/*	b.Update();
 		c.Update();
-		d.Update();*/
+		d.Update();
 		frames ++;
 		//std::cout << frames << std::endl;
 		float currentTime = frames;
 		float deltaTime = currentTime - prevFrame;
 		prevFrame = currentTime;
 		h.updateTime(deltaTime);
-		//cout << h.getDay() << " " << h.getHour() << endl;
+
+		gui::BeginRender();
+		gui::Render(x);
+		gui::EndRender();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		x++;
 	}
-	cout << "hello world";
-	return 1;
+
+	// destroy gui
+	gui::DestroyImGui();
+	gui::DestroyDevice();
+	gui::DestroyHWindow();
+
+	return EXIT_SUCCESS;
 }

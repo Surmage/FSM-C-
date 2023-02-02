@@ -1,18 +1,17 @@
 #pragma once
 #include <string>
-using namespace std;
 
 struct Agent;
 
 struct State
 {
-    string type;
+    std::string type;
     float speed;
     float energyChangeVal;
     //GameObject agent;
     //GameObject manager;
     //InterfaceManager im;
-    string dateWith;
+    std::string dateWith;
 
     virtual void Enter(Agent* agent) = 0;
 
@@ -23,7 +22,7 @@ struct State
     State() {
         speed = 1;
     }
-    void setStartValues(string type)
+    void setStartValues(std::string type)
     {
         //manager = GameObject.Find("InterfaceManager");
         //im = manager.GetComponent<InterfaceManager>();
@@ -32,7 +31,7 @@ struct State
         dateWith = "";
         energyChangeVal = -0.22f;
     }
-    void setDate(string next)
+    void setDate(std::string next)
     {
         this->dateWith = next;
     }
