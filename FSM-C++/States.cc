@@ -5,8 +5,8 @@
 void Drink::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal * speed);
-    agent->changeThirst(3 * speed);
+    agent->changeEnergy(energyChangeVal);
+    agent->changeThirst(3);
 }
 void Drink::Enter(Agent* agent)
 {
@@ -23,11 +23,11 @@ void Drink::Exit(Agent* agent)
 void Eat::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal * speed);
-    agent->changeHunger(0.5f * speed);
+    agent->changeEnergy(energyChangeVal);
+    agent->changeHunger(0.5f);
     agent->busy = true;
-    agent->changeThirst(1 * speed);
-    agent->changeHappiness(0.1f * speed);
+    agent->changeThirst(1);
+    agent->changeHappiness(0.1f);
     agent->busy = false;
 }
 void Eat::Enter(Agent* agent)
@@ -50,11 +50,11 @@ void Eat::Exit(Agent* agent)
 void Gather::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal * speed);
-    agent->changeHunger(-0.2f * speed);
-    agent->changeThirst(-0.5f * speed);
-    agent->changeMoney(0.1f * speed);
-    agent->changeHappiness(-0.05f * speed);
+    agent->changeEnergy(energyChangeVal);
+    agent->changeHunger(-0.2f);
+    agent->changeThirst(-0.5f);
+    agent->changeMoney(0.1f);
+    agent->changeHappiness(-0.05f);
 }
 void Gather::Enter(Agent* agent)
 {
@@ -72,10 +72,10 @@ void Gather::Exit(Agent* agent)
 void Idle::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal * speed);
-    agent->changeHunger(-0.3f * speed);
-    agent->changeThirst(-1.0f * speed);
-    agent->changeHappiness(-0.1f * speed);
+    agent->changeEnergy(energyChangeVal);
+    agent->changeHunger(-0.3f);
+    agent->changeThirst(-1.0f);
+    agent->changeHappiness(-0.1f);
 }
 void Idle::Enter(Agent* agent)
 {
@@ -93,11 +93,11 @@ void Idle::Exit(Agent* agent)
 void Mining::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal * speed);
-    agent->changeHunger(-0.2f * speed);
-    agent->changeThirst(-0.5f * speed);
-    agent->changeMoney(0.3f * speed);
-    agent->changeHappiness(-0.2f * speed);
+    agent->changeEnergy(energyChangeVal);
+    agent->changeHunger(-0.2f);
+    agent->changeThirst(-0.5f);
+    agent->changeMoney(0.3f);
+    agent->changeHappiness(-0.2f);
 }
 void Mining::Enter(Agent* agent)
 {
@@ -124,11 +124,11 @@ void Mining::Exit(Agent* agent)
 void Social::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal * speed);
-    agent->changeHappiness(0.5f * speed);
+    agent->changeEnergy(energyChangeVal);
+    agent->changeHappiness(0.5f);
     agent->busy = true;
-    agent->changeHunger(0.5f * speed);
-    agent->changeThirst(0.5f * speed);
+    agent->changeHunger(0.5f);
+    agent->changeThirst(0.5f);
     agent->busy = false;
 }
 void Social::Enter(Agent* agent)
@@ -151,10 +151,10 @@ void Sleep::Execute(Agent* agent)
 {
     //Change stat variables
     agent->busy = true;
-    agent->changeHunger(-0.01f * speed);
-    agent->changeThirst(-0.02f * speed);
+    agent->changeHunger(-0.01f);
+    agent->changeThirst(-0.02f);
     agent->busy = false;
-    agent->changeEnergy(-energyChangeVal * 2 * speed);
+    agent->changeEnergy(-energyChangeVal * 2);
 }
 void Sleep::Enter(Agent* agent)
 {

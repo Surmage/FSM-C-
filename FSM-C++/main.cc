@@ -15,30 +15,28 @@ int __stdcall wWinMain(
 	gui::CreateImGui();
 	int x = 0;
 
-	Idle s;	
-	std::vector<Agent>v;
 	//create actor 1
-	Agent a("name");
-	v.push_back(a);
+	char txtAgent1[] = "Agent1";
+	Agent a(txtAgent1);
 	//create actor 2
-	Agent b("name2");
-	v.push_back(b);
+	char txtAgent2[] = "Agent2";
+	Agent b(txtAgent2);
 	//create actor 3
-	Agent c("name3");
-	v.push_back(c);
+	char txtAgent3[] = "Agent3";
+	Agent c(txtAgent3);
 	//create actor 4
-	Agent d("name4");
-	v.push_back(d);
+	char txtAgent4[] = "Agent4";
+	Agent d(txtAgent4);
 	Telegram t(&a, &b, &c, &d);
 	TimeManager h;
 	//t.getValue(1);
 	//t.getValue(3);
 
 	//Give agents a phone
-	//a.setPhone(&t);
-	//b.setPhone(&t);
-	//c.setPhone(&t);
-	//d.setPhone(&t);
+	a.setPhone(&t);
+	b.setPhone(&t);
+	c.setPhone(&t);
+	d.setPhone(&t);
 
 	//Give agents a clock
 	a.setClock(&h);
@@ -60,10 +58,10 @@ int __stdcall wWinMain(
 		float currentTime = frames;
 		float deltaTime = currentTime - prevFrame;
 		prevFrame = currentTime;
-		h.updateTime(deltaTime);
+		h.updateTime(deltaTime * 5000);
 
 		gui::BeginRender();
-		gui::Render(x);
+		gui::Render(a.getMainStatValues(), a.getStringValues());
 		gui::EndRender();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));

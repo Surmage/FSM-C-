@@ -238,7 +238,7 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-void gui::Render(int x) noexcept
+void gui::Render(int* arr, char* values) noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
@@ -251,11 +251,11 @@ void gui::Render(int x) noexcept
 		ImGuiWindowFlags_NoMove
 	);
 
-	SetupGUI(x);
+	SetupGUI(arr, values);
 	ImGui::End();
 }
 
-void gui::SetupGUI(int x) noexcept {
+void gui::SetupGUI(int* arr, char* values) noexcept {
 
 	ImGui::SetCursorPos(ImVec2(400, 25));
 	ImGui::Button("Agent1", ImVec2(50, 50));
@@ -267,22 +267,22 @@ void gui::SetupGUI(int x) noexcept {
 	ImGui::Button("Agent4", ImVec2(50, 50));
 
 	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(0, 255, 0, 255));
-	ImGui::VSliderInt("", ImVec2(50, 500), &x, 0, 8000);
-	ImGui::PopStyleColor();
-	ImGui::SameLine();
-
-	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(255, 0, 0, 255));
-	ImGui::VSliderInt("", ImVec2(50, 500), &x, 0, 8000);
-	ImGui::PopStyleColor();
-	ImGui::SameLine();
-
-	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(255, 255, 0, 255));
-	ImGui::VSliderInt("", ImVec2(50, 500), &x, 0, 8000);
+	ImGui::VSliderInt("", ImVec2(50, 500), &arr[0], 0, 8000);
 	ImGui::PopStyleColor();
 	ImGui::SameLine();
 
 	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(0, 0, 255, 255));
-	ImGui::VSliderInt("", ImVec2(50, 500), &x, 0, 8000);
+	ImGui::VSliderInt("", ImVec2(50, 500), &arr[1], 0, 8000);
+	ImGui::PopStyleColor();
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(255, 0, 0, 255));
+	ImGui::VSliderInt("", ImVec2(50, 500), &arr[2], 0, 8000);
+	ImGui::PopStyleColor();
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(255, 255, 0, 255));
+	ImGui::VSliderInt("", ImVec2(50, 500), &arr[3], 0, 8000);
 	ImGui::PopStyleColor();
 
 	ImGui::SetCursorPos(ImVec2(750, 50));
@@ -295,7 +295,7 @@ void gui::SetupGUI(int x) noexcept {
 	ImGui::Text("Chat: ");
 
 	ImGui::SetCursorPos(ImVec2(75, 600));
-	ImGui::Text("Money: ");
+	ImGui::Text(&values[0]);
 
 	char txt_def[] = "Enter speed";
 

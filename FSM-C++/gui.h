@@ -1,5 +1,6 @@
 #pragma once
 #include <d3d9.h>
+#include <iostream>
 
 namespace gui
 {
@@ -38,6 +39,6 @@ namespace gui
 
 	void BeginRender() noexcept;
 	void EndRender() noexcept;
-	void Render(int x) noexcept;
-	void SetupGUI(int x) noexcept;
+	void Render(int* arr, char* values) noexcept;
+	void SetupGUI(int* arr, char* values) noexcept;
 }

@@ -7,14 +7,16 @@
 #include "Telegram.h"
 #include "TimeManager.h"
 #include "States.h"
+#include <sstream>
 
 struct Agent
 {
     float fullness;
     float thirst;
     float energy;
-    float money;
     float happiness;
+    float money;
+    float speed;
     std::string type;
     std::string status;
     std::string name;
@@ -54,9 +56,10 @@ struct Agent
         type = s->type;
         date = std::make_tuple(0.0f, this);
         hour = 0;
+        speed = 1;
     }
-//
-//    // Update is called once per frame
+
+    // Update is called once per frame
     void Update()
     {
         s->Execute(this);
@@ -122,7 +125,7 @@ struct Agent
     {
         if (fullness >= 0 && fullness <= 8000)
         {
-            fullness += change;
+            fullness += change * speed;
             if (!busy)
             {
                 //If too low
@@ -144,7 +147,7 @@ struct Agent
     {
         if (thirst >= 0 && thirst <= 8000)
         {
-            thirst += change;
+            thirst += change * speed;
             if (!busy)
             {
                 //If too low
@@ -166,7 +169,7 @@ struct Agent
     {
         if (energy >= 0 && energy <= 8000)
         {
-            energy += change;
+            energy += change * speed;
             if (!busy)
             {
                 if (energy <= 0) //pass out
@@ -202,7 +205,7 @@ struct Agent
     }
     void changeMoney(float change)
     {
-        money += change;
+        money += change * speed;
         if (!busy)
         {
             if (status != "Social")
@@ -224,7 +227,7 @@ struct Agent
     }
     void changeHappiness(float change)
     {
-        happiness += change;
+        happiness += change * speed;
         if (!busy)
         {
             //if too low
@@ -272,38 +275,38 @@ struct Agent
     {
         State* s = NULL;
         //Plan to socialize
-        //if (message == "Bored" && this->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
-        //{
-        //    if (this->money >= 1000) //If not broke
-        //    {
-        //        if (s->type != "Social") //If not already socializing
-        //        {
-        //            for (int i = 0; i < 4; i++) //Check through all agents
-        //            {
-        //                if (this->name != phone->getAgent(i).name) //Check that caller isn't asking themselves to hang out
-        //                {
-        //                    if (phone->dispatchMessage(0, this, &phone->getAgent(i), "") == "Yes") //If agent says yes
-        //                    {
-        //                        this->date = make_tuple(clock->getHour() + 2, &phone->getAgent(i));
-        //                        phone->getAgent(i).date = make_tuple(clock->getHour() + 2, this); //Plan date
-        //                    }
-        //                }
-        //            }
-        //            //Make unable to socialize for 10 seconds (affected by speed variable)
-        //            setCanSocial(false);
-        //            //Find new state to enter
-        //            message = this->isAnythingLow();
-        //        }
+        if (message == "Bored" && this->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
+        {
+            if (this->money >= 1000) //If not broke
+            {
+                if (s->type != "Social") //If not already socializing
+                {
+                    for (int i = 0; i < 4; i++) //Check through all agents
+                    {
+                        if (this->name != phone->getAgent(i)->name) //Check that caller isn't asking themselves to hang out
+                        {
+                            if (phone->dispatchMessage(this, phone->getAgent(i), "") == "Yes") //If agent says yes
+                            {
+                                this->date = std::make_tuple(clock->getHour() + 2, phone->getAgent(i));
+                                phone->getAgent(i)->date = std::make_tuple(clock->getHour() + 2, this); //Plan date
+                            }
+                        }
+                    }
+                    //Make unable to socialize for 10 seconds (affected by speed variable)
+                    setCanSocial(false);
+                    //Find new state to enter
+                    message = this->isAnythingLow();
+                }
 
-        //    }
-        //    else
-        //    {
-        //        //Make unable to socialize for 10 seconds (affected by speed variable)
-        //        this->setCanSocial(false);
-        //        //Find new state to enter
-        //        message = this->isAnythingLow();
-        //    }
-        //}
+            }
+            else
+            {
+                //Make unable to socialize for 10 seconds (affected by speed variable)
+                this->setCanSocial(false);
+                //Find new state to enter
+                message = this->isAnythingLow();
+            }
+        }
         //Enter eat state
         if (message == "Hungry")
         {
@@ -475,15 +478,15 @@ struct Agent
         {
             if (timesAskedForHelp <= 4) //can only receive money for food 4 times before friends stop
             {
-                //if (!phone->askForMoney(this)) //remove entering eating as an option
-                //{
-                //    arrs.erase(arrs.begin() + 2);
-                //}
-                //else
-                //{
-                //    timesAskedForHelp++;
-                //    return "Hungry"; //eating will be the next state
-                //}
+                if (!phone->askForMoney(this)) //remove entering eating as an option
+                {
+                    arrs.erase(arrs.begin() + 2);
+                }
+                else
+                {
+                    timesAskedForHelp++;
+                    return "Hungry"; //eating will be the next state
+                }
             }
             else
             {
@@ -640,5 +643,15 @@ struct Agent
     }
     void setClock(TimeManager* h) {
         clock = h;
+    }
+    int* getMainStatValues() {
+        int arr[4] = { (int)fullness, (int)thirst, (int)energy, (int)happiness};
+        return arr;
+    }
+    char* getStringValues() {
+        char buf[20];      
+        sprintf_s(buf, "%f", money);
+        return buf;
+
     }
 };
