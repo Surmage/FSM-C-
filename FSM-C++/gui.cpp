@@ -238,7 +238,7 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-void gui::Render(int* arr, char* values, char* timeValues) noexcept
+void gui::Render() noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
@@ -250,21 +250,33 @@ void gui::Render(int* arr, char* values, char* timeValues) noexcept
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoMove
 	);
-
-	SetupGUI(arr, values, timeValues);
+	
+}
+void gui::EndGUI() noexcept {
 	ImGui::End();
 }
 
-void gui::SetupGUI(int* arr, char* values, char* timeValues) noexcept {
+int gui::SetupGUI(int* arr, char* values, char* money, char* timeValues, char* chat, int i){
 
 	ImGui::SetCursorPos(ImVec2(400, 25));
-	ImGui::Button("Agent1", ImVec2(50, 50));
+	if (ImGui::Button("Agent1", ImVec2(50, 50))) {
+		return 0;
+	}
 	ImGui::SameLine();
-	ImGui::Button("Agent2", ImVec2(50, 50));
+
+	if (ImGui::Button("Agent2", ImVec2(50, 50))) {
+		return 1;
+	}
 	ImGui::SameLine();
-	ImGui::Button("Agent3", ImVec2(50, 50));
+
+	if (ImGui::Button("Agent3", ImVec2(50, 50))) {
+		return 2;
+	}
+
 	ImGui::SameLine();
-	ImGui::Button("Agent4", ImVec2(50, 50));
+	if (ImGui::Button("Agent4", ImVec2(50, 50))) {
+		return 3;
+	}
 
 	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(0, 255, 0, 255));
 	ImGui::VSliderInt("", ImVec2(50, 500), &arr[0], 0, 8000);
@@ -286,23 +298,35 @@ void gui::SetupGUI(int* arr, char* values, char* timeValues) noexcept {
 	ImGui::PopStyleColor();
 
 	ImGui::SetCursorPos(ImVec2(750, 50));
-	ImGui::Text(&timeValues[0]);
+	ImGui::Text(timeValues);
 
 	ImGui::SetCursorPos(ImVec2(400, 400));
-	ImGui::Text("Current state: ");
+	ImGui::Text(values);
 
 	ImGui::SetCursorPos(ImVec2(800, 400));
-	ImGui::Text("Chat: ");
+	ImGui::Text(chat);
 
 	ImGui::SetCursorPos(ImVec2(75, 600));
-	ImGui::Text(&values[0]);
+	ImGui::Text(money);
 
 	char txt_def[] = "Enter speed";
-
 	ImGui::SetCursorPos(ImVec2(200, 700));
 	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 	ImGui::Text("Speed");
 	ImGui::PopStyleColor();
-	ImGui::SameLine();
-	ImGui::InputText("##Speed", txt_def, sizeof(txt_def));
+
+	return i;
+}
+
+int gui::SpeedSlider(int spd) {
+	ImGui::SetCursorPos(ImVec2(250, 700));
+	ImGui::SliderInt("Slider", &spd, 1, 25);
+	return spd;
+}
+
+bool gui::PauseButtonF(bool isPaused) {
+	ImGui::SetCursorPos(ImVec2(900, 50));
+	if (ImGui::Button("Pause", ImVec2(50, 50))) {
+		return !isPaused;
+	}
 }

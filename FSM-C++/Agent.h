@@ -39,7 +39,6 @@ struct Agent
         busy = false;
         needRepair = false;
         //randomize start values
-        srand(time(NULL)); //reset rng seed
         float startValue1 = 4000 + rand() % 4001; //random between 4000 and 8000
         float startValue2 = 2000;
         float startValue3 = 4000 + rand() % 4001;
@@ -56,12 +55,13 @@ struct Agent
         type = s->type;
         date = std::make_tuple(0.0f, this);
         hour = 0;
-        speed = 5;
+        speed = 1;
     }
 
     // Update is called once per frame
-    void Update()
+    void Update(int speed)
     {
+        this->speed = speed;
         s->Execute(this);
         type = s->type;
         //hour = im.getHour();
@@ -648,12 +648,12 @@ struct Agent
         int arr[4] = { (int)fullness, (int)thirst, (int)energy, (int)happiness};
         return arr;
     }
-    char* getType() {
+    char* getState() {
         char buf[100];
         sprintf(buf, "State: %s", type.c_str());
         return buf;
     }
-    char* getStringValues() {
+    char* getMoneyChar() {
         char buf[20];      
         sprintf_s(buf, "Money: %i", (int)money);
         return buf;

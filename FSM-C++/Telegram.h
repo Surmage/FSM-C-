@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 struct Agent;
 
 struct Telegram
@@ -9,6 +9,8 @@ struct Telegram
     Agent* c;
     Agent* d;
 
+    char chat[256];
+
     Telegram();
     Telegram(Agent *aa, Agent *bb, Agent *cc, Agent *dd);
    
@@ -17,5 +19,6 @@ struct Telegram
    
     bool askForMoney(Agent* caller);
     char* dispatchMessage(Agent* sender, Agent* receiver, const char* incMsg);
-
+    char* getMessageChat();
+    void updateMessageText(std::string msg);
 };

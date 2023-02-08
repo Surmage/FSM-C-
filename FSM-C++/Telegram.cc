@@ -3,10 +3,10 @@
 #include "Agent.h"
 
 Telegram::Telegram() :
-	a(0), b(0), c(0), d(0)
+	a(0), b(0), c(0), d(0), chat("wha")
 {}
 Telegram::Telegram(Agent* aa, Agent* bb, Agent* cc, Agent* dd) :
-	a(aa), b(bb), c(cc), d(dd)
+	a(aa), b(bb), c(cc), d(dd), chat("Chat:")
 {}
 
 Agent* Telegram::getAgent(int i) {
@@ -50,21 +50,38 @@ bool Telegram::askForMoney(Agent* caller)
 }
 char* Telegram::dispatchMessage(Agent* sender, Agent* receiver, const char* incMsg)
 {
-    char msg[50];
+    char msg[100];
     //im.updateMessageText(senderName + " is asking  " + receiverName + " to hangout.");
-    /*if (receiver->money >= 2000 && receiver->canISocial() && receiver->busy == false && receiver->status != "Dead")
+    if (receiver->money >= 2000 && receiver->canISocial() && receiver->busy == false && receiver->status != "Dead")
     {
-        msg = "Yes";
+        sprintf(msg, "Yes");      
     }
     else if (receiver->money <= 2000)
     {
-        msg = "I'm too poor";
+        sprintf(msg, "I'm too poor");
     }
     else
     {
-        msg = "Can't because I am " + receiver->type;
+        sprintf(msg, "Can't because I am%s", receiver->type.c_str());
 
-    }*/
+    }
+    
     //im.updateMessageText(receiverName + ": " + msg);
     return msg;
+}
+char* Telegram::getMessageChat() {
+    return chat;
+}
+void Telegram::updateMessageText(std::string msg)
+{
+    sprintf(chat, "%s", msg.c_str());
+    //chat += buf;
+
+    //int numLines = messagesText.text.Split('\n').Length;
+    ////Remove upper messages
+    //if (numLines > 6)
+    //{
+    //    string[] items = messagesText.text.Split('\n');
+    //    messagesText.text = items[1] + "\n" + items[2] + "\n" + items[3] + "\n" + items[4] + "\n" + items[5] + "\n";
+    //}
 }

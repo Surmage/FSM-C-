@@ -2,7 +2,6 @@
 #include <iostream>
 struct TimeManager {
     float time;
-    char chat[256];
     TimeManager() {
         time = 0;
     }
@@ -34,24 +33,5 @@ struct TimeManager {
         return buf;
 
     }
-    char* getMessageChat() {
-        return chat;
-    }
-    void updateMessageText(std::string msg)
-    {
-        char buf[100];
-        sprintf_s(buf, "%s", msg.c_str());
-        //chat += buf;
-
-        //int numLines = messagesText.text.Split('\n').Length;
-        ////Remove upper messages
-        //if (numLines > 6)
-        //{
-        //    string[] items = messagesText.text.Split('\n');
-        //    messagesText.text = items[1] + "\n" + items[2] + "\n" + items[3] + "\n" + items[4] + "\n" + items[5] + "\n";
-        //}
-        ////Add messages to message box
-        //messagesText.text += msg;
-        //messagesText.text += "\n";
-    }
+    
 };

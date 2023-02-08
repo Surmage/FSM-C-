@@ -39,6 +39,9 @@ namespace gui
 
 	void BeginRender() noexcept;
 	void EndRender() noexcept;
-	void Render(int* arr, char* values, char* timeValues) noexcept;
-	void SetupGUI(int* arr, char* values, char* timeValues) noexcept;
+	void Render() noexcept;
+	void EndGUI() noexcept;
+	int SetupGUI(int* arr, char* values, char* money, char* timeValues, char* chat, int i);
+	bool PauseButtonF(bool isPaused);
+	int SpeedSlider(int i);
 }
