@@ -238,7 +238,7 @@ void gui::EndRender() noexcept
 		ResetDevice();
 }
 
-void gui::Render(int* arr, char* values) noexcept
+void gui::Render(int* arr, char* values, char* timeValues) noexcept
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ WIDTH, HEIGHT });
@@ -251,11 +251,11 @@ void gui::Render(int* arr, char* values) noexcept
 		ImGuiWindowFlags_NoMove
 	);
 
-	SetupGUI(arr, values);
+	SetupGUI(arr, values, timeValues);
 	ImGui::End();
 }
 
-void gui::SetupGUI(int* arr, char* values) noexcept {
+void gui::SetupGUI(int* arr, char* values, char* timeValues) noexcept {
 
 	ImGui::SetCursorPos(ImVec2(400, 25));
 	ImGui::Button("Agent1", ImVec2(50, 50));
@@ -286,7 +286,7 @@ void gui::SetupGUI(int* arr, char* values) noexcept {
 	ImGui::PopStyleColor();
 
 	ImGui::SetCursorPos(ImVec2(750, 50));
-	ImGui::Text("Day: Hour:");
+	ImGui::Text(&timeValues[0]);
 
 	ImGui::SetCursorPos(ImVec2(400, 400));
 	ImGui::Text("Current state: ");

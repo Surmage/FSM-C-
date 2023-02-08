@@ -56,7 +56,7 @@ struct Agent
         type = s->type;
         date = std::make_tuple(0.0f, this);
         hour = 0;
-        speed = 1;
+        speed = 5;
     }
 
     // Update is called once per frame
@@ -279,7 +279,7 @@ struct Agent
         {
             if (this->money >= 1000) //If not broke
             {
-                if (s->type != "Social") //If not already socializing
+                if (type != "Social") //If not already socializing
                 {
                     for (int i = 0; i < 4; i++) //Check through all agents
                     {
@@ -648,9 +648,14 @@ struct Agent
         int arr[4] = { (int)fullness, (int)thirst, (int)energy, (int)happiness};
         return arr;
     }
+    char* getType() {
+        char buf[100];
+        sprintf(buf, "State: %s", type.c_str());
+        return buf;
+    }
     char* getStringValues() {
         char buf[20];      
-        sprintf_s(buf, "%f", money);
+        sprintf_s(buf, "Money: %i", (int)money);
         return buf;
 
     }

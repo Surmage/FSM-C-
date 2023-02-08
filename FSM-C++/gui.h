@@ -39,6 +39,6 @@ namespace gui
 
 	void BeginRender() noexcept;
 	void EndRender() noexcept;
-	void Render(int* arr, char* values) noexcept;
-	void SetupGUI(int* arr, char* values) noexcept;
+	void Render(int* arr, char* values, char* timeValues) noexcept;
+	void SetupGUI(int* arr, char* values, char* timeValues) noexcept;
 }

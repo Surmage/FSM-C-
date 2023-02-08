@@ -13,7 +13,6 @@ int __stdcall wWinMain(
 	gui::CreateHWindow("FSM");
 	gui::CreateDevice();
 	gui::CreateImGui();
-	int x = 0;
 
 	//create actor 1
 	char txtAgent1[] = "Agent1";
@@ -46,7 +45,6 @@ int __stdcall wWinMain(
 
 	float prevFrame = 0;
 	float frames = 0;
-
 	while (gui::isRunning)
 	{
 		a.Update();
@@ -58,14 +56,13 @@ int __stdcall wWinMain(
 		float currentTime = frames;
 		float deltaTime = currentTime - prevFrame;
 		prevFrame = currentTime;
-		h.updateTime(deltaTime * 5000);
+		h.updateTime(deltaTime + (frames/60));
 
 		gui::BeginRender();
-		gui::Render(a.getMainStatValues(), a.getStringValues());
+		gui::Render(a.getMainStatValues(), a.getType(), h.getTimeChar());
 		gui::EndRender();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
-		x++;
 	}
 
 	// destroy gui
