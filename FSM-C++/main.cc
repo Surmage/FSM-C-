@@ -5,7 +5,6 @@
 #include <chrono>
 using namespace std::chrono;
 
-
 int __stdcall wWinMain(
 	HINSTANCE instance,
 	HINSTANCE previousInstance,
@@ -31,7 +30,7 @@ int __stdcall wWinMain(
 	char txtAgent4[] = "Agent4";
 	Agent d(txtAgent4);
 	
-	Telegram t(&a, &b, &c, &d);
+	Telegram t(a, b, c, d);
 	TimeManager h;
 	//t.getValue(1);
 	//t.getValue(3);
@@ -50,7 +49,7 @@ int __stdcall wWinMain(
 
 	float prevFrame = 0;
 	float frames = 0;
-	int i = 0;
+	int i = 2;
 	bool isPaused = false;
 	int speed = 1;
 
@@ -60,22 +59,30 @@ int __stdcall wWinMain(
 	v.push_back(d);
 
 	high_resolution_clock::duration totalTime(0);
+	using clock = std::chrono::steady_clock;
+	clock::duration elapsed = {};
 	auto start = high_resolution_clock::now();
-
 	while (gui::isRunning)
 	{
-		if (!isPaused) {
+		elapsed = std::chrono::steady_clock::now() - start;
+		if (!isPaused) {		
 			for (int j = 0; j < v.size(); j++) {
+				//Give agents a phone
+				v[j].setPhone(&t);
+				//Give agents a clock
+				v[j].setClock(&h);
 				v[j].Update(speed);
 			}
-			frames++;
 			//std::cout << frames << std::endl;
-			float currentTime = frames;
+			float currentTime = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600; //roughly 1 hour per 2 seconds
 			float deltaTime = currentTime - prevFrame;
 			prevFrame = currentTime;
-			h.updateTime(deltaTime + (frames / 60) * speed);
+			h.updateTime(deltaTime  * speed);
 		}
-		
+		else {
+			//pause
+			prevFrame = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600;
+		}
 
 		gui::BeginRender();
 		gui::Render();

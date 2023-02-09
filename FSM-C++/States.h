@@ -10,7 +10,6 @@ struct State
     //GameObject agent;
     //GameObject manager;
     //InterfaceManager im;
-    std::string dateWith;
 
     virtual void Enter(Agent* agent) = 0;
 
@@ -25,33 +24,16 @@ struct State
         //manager = GameObject.Find("InterfaceManager");
         //im = manager.GetComponent<InterfaceManager>();
         this->type = type;
-        dateWith = "";
-        energyChangeVal = -0.22f;
-    }
-    void setDate(std::string next)
-    {
-        this->dateWith = next;
+        energyChangeVal = -3.0f;
     }
 };
 //
 struct Dead : State
 {
-    virtual void Execute(Agent* agent)
-    {
+    virtual void Execute(Agent* agent);
+    virtual void Enter(Agent* agent);
 
-    }
-    virtual void Enter(Agent* agent)
-    {
-        //Debug.Log(name + " entering Idle state");
-        setStartValues("dead");
-
-    }
-
-    virtual void Exit(Agent* agent)
-    {
-        //Debug.Log(name + " exiting Gather state");
-
-    }
+    virtual void Exit(Agent* agent);
 };
 struct Drink : State
 {

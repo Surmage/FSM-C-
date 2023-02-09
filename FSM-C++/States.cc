@@ -5,8 +5,8 @@
 void Drink::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal);
-    agent->changeThirst(3);
+    agent->changeEnergy(energyChangeVal, true);
+    agent->changeThirst(3 * 8 * 6, true);
 }
 void Drink::Enter(Agent* agent)
 {
@@ -23,11 +23,11 @@ void Drink::Exit(Agent* agent)
 void Eat::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal);
-    agent->changeHunger(0.5f);
+    agent->changeEnergy(energyChangeVal, true);
+    agent->changeHunger(3 * 8 * 2, true);
     agent->busy = true;
-    agent->changeThirst(1);
-    agent->changeHappiness(0.1f);
+    agent->changeThirst(3 * 8 * 3, true);
+    agent->changeHappiness(3.0f / 3, true);
     agent->busy = false;
 }
 void Eat::Enter(Agent* agent)
@@ -37,8 +37,9 @@ void Eat::Enter(Agent* agent)
     //"busy" being true prevents state from changing
     agent->busy = true;
     //Pay for food
-    agent->changeMoney(-500);
+    agent->changeMoney(-500, false);
     agent->busy = false;
+    agent->timesEaten++;
 }
 
 void Eat::Exit(Agent* agent)
@@ -50,11 +51,11 @@ void Eat::Exit(Agent* agent)
 void Gather::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal);
-    agent->changeHunger(-0.2f);
-    agent->changeThirst(-0.5f);
-    agent->changeMoney(0.1f);
-    agent->changeHappiness(-0.05f);
+    agent->changeEnergy(energyChangeVal, true);
+    agent->changeHunger(-3.0f * 2, true);
+    agent->changeThirst(-3.0f * 4, true);
+    agent->changeMoney(3.0f, true);
+    agent->changeHappiness(-3.0f, true);
 }
 void Gather::Enter(Agent* agent)
 {
@@ -72,15 +73,15 @@ void Gather::Exit(Agent* agent)
 void Idle::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal);
-    agent->changeHunger(-0.3f);
-    agent->changeThirst(-1.0f);
-    agent->changeHappiness(-0.1f);
+    agent->changeEnergy(energyChangeVal, true);
+    agent->changeHunger(-3.0f * 1.5f, true);
+    agent->changeThirst(-3.0f * 2, true);
+    agent->changeHappiness(-3.0f, true);
 }
 void Idle::Enter(Agent* agent)
 {
     //Debug.Log(name + " entering Idle state");
-    //setStartValues("idling around");
+    setStartValues("idling around");
 
 }
 
@@ -93,11 +94,11 @@ void Idle::Exit(Agent* agent)
 void Mining::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal);
-    agent->changeHunger(-0.2f);
-    agent->changeThirst(-0.5f);
-    agent->changeMoney(0.3f);
-    agent->changeHappiness(-0.2f);
+    agent->changeEnergy(energyChangeVal, true);
+    agent->changeHunger(-3.0f * 2, true);
+    agent->changeThirst(-3.0f * 4, true);
+    agent->changeMoney(3.0f * 3, true);
+    agent->changeHappiness(-3.0f, true);
 }
 void Mining::Enter(Agent* agent)
 {
@@ -109,7 +110,7 @@ void Mining::Enter(Agent* agent)
         //"busy" being true prevents state from changing
         agent->busy = true;
         agent->needRepair = false;
-        agent->changeMoney(-1500);
+        agent->changeMoney(-1500, false);
         agent->busy = false;
         //Debug.Log(name + " Payed 1500 for new pickaxe after " + agentBehavior.money);
     }
@@ -124,11 +125,11 @@ void Mining::Exit(Agent* agent)
 void Social::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal);
-    agent->changeHappiness(0.5f);
+    agent->changeEnergy(energyChangeVal, true);
+    agent->changeHappiness(0.5f, true);
     agent->busy = true;
-    agent->changeHunger(0.5f);
-    agent->changeThirst(0.5f);
+    agent->changeHunger(0.5f, true);
+    agent->changeThirst(0.5f, true);
     agent->busy = false;
 }
 void Social::Enter(Agent* agent)
@@ -136,8 +137,8 @@ void Social::Enter(Agent* agent)
     //Debug.Log(name + " entering Social state");
     //"busy" being true prevents state from changing
     agent->busy = true;
-    agent->changeMoney(-1000);
-    agent->changeHappiness(1000);
+    agent->changeMoney(-1000, false);
+    agent->changeHappiness(1000, false);
     agent->busy = false;
     setStartValues("socializing");
 }
@@ -151,10 +152,10 @@ void Sleep::Execute(Agent* agent)
 {
     //Change stat variables
     agent->busy = true;
-    agent->changeHunger(-0.01f);
-    agent->changeThirst(-0.02f);
+    agent->changeHunger(-3.0f / 3, true);
+    agent->changeThirst(-3.0f / 3, true);
     agent->busy = false;
-    agent->changeEnergy(-energyChangeVal * 2);
+    agent->changeEnergy(-energyChangeVal * 2, true);
 }
 void Sleep::Enter(Agent* agent)
 {
@@ -164,6 +165,23 @@ void Sleep::Enter(Agent* agent)
 }
 
 void Sleep::Exit(Agent* agent)
+{
+    //Debug.Log(name + " exiting Gather state");
+
+}
+
+void Dead::Execute(Agent* agent)
+{
+
+}
+void Dead::Enter(Agent* agent)
+{
+    //Debug.Log(name + " entering Idle state");
+    setStartValues("dead");
+
+}
+
+void Dead::Exit(Agent* agent)
 {
     //Debug.Log(name + " exiting Gather state");
 

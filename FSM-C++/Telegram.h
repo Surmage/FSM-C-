@@ -4,15 +4,15 @@ struct Agent;
 
 struct Telegram
 {
-    Agent* a;
-    Agent* b;
-    Agent* c;
-    Agent* d;
+    Agent& a;
+    Agent& b;
+    Agent& c;
+    Agent& d;
 
     char chat[256];
 
     Telegram();
-    Telegram(Agent *aa, Agent *bb, Agent *cc, Agent *dd);
+    Telegram(Agent &aa, Agent &bb, Agent &cc, Agent &dd);
    
 
     Agent* getAgent(int i);

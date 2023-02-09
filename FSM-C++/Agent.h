@@ -17,8 +17,11 @@ struct Agent
     float happiness;
     float money;
     float speed;
+    float timesEaten;
     std::string type;
     std::string status;
+    std::string prevType;
+    std::string prevStatus;
     std::string name;
     bool busy;
     bool canSocial;
@@ -29,11 +32,12 @@ struct Agent
     int timesAskedForHelp;
     float hour;
     std::tuple<float, Agent*>date;
-    Agent() {
-
-    }
+    Agent()
+        
+    {}
     Agent(std::string name)
     {
+        this->name = name;
         timesAskedForHelp = 0;
         canSocial = true;
         busy = false;
@@ -47,21 +51,37 @@ struct Agent
         energy = startValue2;
         money = startValue3;
         happiness = startValue3;
-        phone = new Telegram;
-        clock = new TimeManager;
         status = "Sleepy";
+        prevStatus = status;
         s = NULL;
         enterState();
         type = s->type;
-        date = std::make_tuple(0.0f, this);
+        prevType = type;
+        date = std::make_tuple(NULL, this);
         hour = 0;
         speed = 1;
+        timesEaten = 0;
     }
 
     // Update is called once per frame
     void Update(int speed)
     {
         this->speed = speed;
+
+        hour = clock->getHour();
+        if (hour == 22)
+        {
+            canSocial = false;
+        }
+        if (hour == 8)
+        {
+            canSocial = true;
+        }
+
+        if (get<0>(date) == hour && get<1>(date)->name != this->name && canSocial) {
+            startToSocial();
+        }
+
         s->Execute(this);
         type = s->type;
         //hour = im.getHour();
@@ -75,6 +95,9 @@ struct Agent
                 s = getState(status);
                 s->Enter(this);
             }
+        }
+        else {
+            prevType = type;
         }
         if (fullness < 0)
         {
@@ -107,78 +130,82 @@ struct Agent
         if (happiness > 8000)
         {
             happiness = 8000;
-        }
-        hour = clock->getHour();
-        if (hour == 22)
-        {
-            canSocial = false;
-        }
-        if (hour == 8)
-        {
-            canSocial = true;
-        }
-        if (get<0>(date) == hour) {
-            startToSocial();
-        }
+        }   
+        
     }
-    void changeHunger(float change)
+    void changeHunger(float change, bool affectedByTime)
     {
         if (fullness >= 0 && fullness <= 8000)
         {
-            fullness += change * speed;
-            if (!busy)
-            {
-                //If too low
-                if (fullness <= 1000 && change < 0)
-                {
-                    checkShouldEnter();
+            if (s->type != "sleeping" || fullness >= 250) {
+                
+                if(affectedByTime)
+                    fullness += change * speed;
+                else
+                    fullness += change;
 
-                }
-                //If too high
-                else if (amIFine() && change > 0)
+                if (!busy)
                 {
-                    checkShouldEnter();
+                    //If too low
+                    if (fullness <= 1000 && change < 0)
+                    {
+                        checkShouldEnter();
 
+                    }
+                    //If too high
+                    else if (amIFine() && change > 0)
+                    {
+                        checkShouldEnter();
+
+                    }
                 }
             }
         }
     }
-    void changeThirst(float change)
+    void changeThirst(float change, bool affectedByTime)
     {
         if (thirst >= 0 && thirst <= 8000)
         {
-            thirst += change * speed;
-            if (!busy)
-            {
-                //If too low
-                if (thirst <= 1000 && change < 0)
+            if (s->type != "sleeping" || thirst >= 250) {
+                if (affectedByTime)
+                    thirst += change * speed;
+                else
+                    thirst += change;
+                if (!busy)
                 {
-                    checkShouldEnter();
+                    //If too low
+                    if (thirst <= 1000 && change < 0)
+                    {
+                        checkShouldEnter();
 
-                }
-                //If too high
-                else if (amIFine() && change > 0)
-                {
-                    checkShouldEnter();
+                    }
+                    //If too high
+                    else if (amIFine() && change > 0)
+                    {
+                        checkShouldEnter();
 
+                    }
                 }
-            }
+            }           
         }
     }
-    void changeEnergy(float change)
+    void changeEnergy(float change, bool affectedByTime)
     {
         if (energy >= 0 && energy <= 8000)
         {
-            energy += change * speed;
+            if (affectedByTime)
+                energy += change * speed;
+            else
+                energy += change;
             if (!busy)
             {
                 if (energy <= 0) //pass out
                 {
                     //im.updateMessageText(name + " passed out");
                     busy = true;
-                    changeHunger(-1500);
-                    changeThirst(-1500);
-                    changeMoney(-500);
+                    changeHunger(-1500, false);
+                    changeThirst(-1500, false);
+                    changeMoney(-500, false);
                     busy = false;
                     checkShouldEnter();
                     return;
@@ -203,9 +230,12 @@ struct Agent
             }
         }
     }
-    void changeMoney(float change)
+    void changeMoney(float change, bool affectedByTime)
     {
-        money += change * speed;
+        if (affectedByTime)
+            money += change * speed;
+        else
+            money += change;
         if (!busy)
         {
             if (status != "Social")
@@ -225,9 +255,12 @@ struct Agent
         }
 
     }
-    void changeHappiness(float change)
+    void changeHappiness(float change, bool affectedByTime)
     {
-        happiness += change * speed;
+        if (affectedByTime)
+            happiness += change * speed;
+        else
+            happiness += change;
         if (!busy)
         {
             //if too low
@@ -273,7 +306,6 @@ struct Agent
     }
     State* getState(std::string message)
     {
-        State* s = NULL;
         //Plan to socialize
         if (message == "Bored" && this->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
         {
@@ -283,7 +315,7 @@ struct Agent
                 {
                     for (int i = 0; i < 4; i++) //Check through all agents
                     {
-                        if (this->name != phone->getAgent(i)->name) //Check that caller isn't asking themselves to hang out
+                        if (this != phone->getAgent(i)) //Check that caller isn't asking themselves to hang out
                         {
                             if (phone->dispatchMessage(this, phone->getAgent(i), "") == "Yes") //If agent says yes
                             {
@@ -310,6 +342,7 @@ struct Agent
         //Enter eat state
         if (message == "Hungry")
         {
+            State* s = NULL;
             s = new Eat;
             return s;
 
@@ -317,6 +350,7 @@ struct Agent
         //Enter sleep state
         if (message == "Sleepy")
         {
+            State* s = NULL;
             s = new Sleep;
             return s;
 
@@ -324,6 +358,7 @@ struct Agent
         //Enter drink state
         if (message == "Thirsty")
         {
+            State* s = NULL;
             s = new Drink;
             return s;
 
@@ -331,6 +366,7 @@ struct Agent
         //Enter gather state
         if (message == "Motivated")
         {
+            State* s = NULL;
             s = new Gather;
             return s;
 
@@ -338,6 +374,7 @@ struct Agent
         //Enter idle state
         if (message == "Fine")
         {
+            State* s = NULL;
             s = new Idle;
             return s;
 
@@ -345,6 +382,7 @@ struct Agent
         //Enter mining state
         if (message == "Poor")
         {
+            State* s = NULL;
             s = new Mining;
             return s;
 
@@ -352,6 +390,7 @@ struct Agent
         //Enter dead state
         if (message == "Dead")
         {
+            State* s = NULL;
             s = new Dead;
             return s;
         }
@@ -638,6 +677,9 @@ struct Agent
     {
         canSocial = value;
     }
+    void setBusy(bool value) {
+        busy = value;
+    }
     void setPhone(Telegram* t) {
         phone = t;
     }
@@ -657,6 +699,5 @@ struct Agent
         char buf[20];      
         sprintf_s(buf, "Money: %i", (int)money);
         return buf;
-
     }
 };
