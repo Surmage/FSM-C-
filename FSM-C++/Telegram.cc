@@ -48,24 +48,23 @@ bool Telegram::askForMoney(Agent* caller)
     }
     return false;
 }
-char* Telegram::dispatchMessage(Agent* sender, Agent* receiver, const char* incMsg)
+std::string Telegram::dispatchMessage(Agent* sender, Agent* receiver)
 {
-    char msg[100];
+    std::string msg;
     //im.updateMessageText(senderName + " is asking  " + receiverName + " to hangout.");
     if (receiver->money >= 2000 && receiver->canISocial() && receiver->busy == false && receiver->status != "Dead")
     {
-        sprintf(msg, "Yes");      
+        msg = "Yes";      
     }
     else if (receiver->money <= 2000)
     {
-        sprintf(msg, "I'm too poor");
+        msg = "I'm too poor";
     }
     else
     {
-        sprintf(msg, "Can't because I am%s", receiver->type.c_str());
+        msg = "Can't because I am" + receiver->type;
 
     }
-    
     //im.updateMessageText(receiverName + ": " + msg);
     return msg;
 }

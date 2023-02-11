@@ -30,8 +30,8 @@ struct Agent
     Telegram* phone;
     TimeManager* clock;
     int timesAskedForHelp;
-    float hour;
-    std::tuple<float, Agent*>date;
+    int hour;
+    std::tuple<int, Agent*>date;
     Agent()
         
     {}
@@ -53,6 +53,8 @@ struct Agent
         happiness = startValue3;
         status = "Sleepy";
         prevStatus = status;
+        phone = nullptr;
+        clock = nullptr;
         s = NULL;
         enterState();
         type = s->type;
@@ -68,22 +70,22 @@ struct Agent
     {
         this->speed = speed;
 
-        hour = clock->getHour();
-        if (hour == 22)
+        hour = (int)clock->getHour();
+        if (hour == 22 && canSocial)
         {
             canSocial = false;
         }
-        if (hour == 8)
+        if (hour == 8 && !canSocial)
         {
             canSocial = true;
         }
 
-        if (get<0>(date) == hour && get<1>(date)->name != this->name && canSocial) {
+        if (get<0>(date) == hour && get<1>(date)->name != this->name && canSocial && type != "socializing") {
             startToSocial();
         }
 
-        s->Execute(this);
         type = s->type;
+        s->Execute(this);
         //hour = im.getHour();
         if (fullness <= 0 || thirst <= 0)
         {
@@ -197,19 +199,20 @@ struct Agent
                 energy += change * speed;
             else
                 energy += change;
-            if (!busy)
+
+            if (energy <= 0) //pass out
             {
-                if (energy <= 0) //pass out
-                {
-                    //im.updateMessageText(name + " passed out");
-                    busy = true;
-                    changeHunger(-1500, false);
-                    changeThirst(-1500, false);
-                    changeMoney(-500, false);
-                    busy = false;
-                    checkShouldEnter();
-                    return;
-                }
+                //im.updateMessageText(name + " passed out");
+                busy = true;
+                changeHunger(-1500, false);
+                changeThirst(-1500, false);
+                changeMoney(-1000, false);
+                busy = false;
+                checkShouldEnter();
+                return;
+            }
+            if (!busy)
+            {               
                 //If too low
                 if (energy <= 1000 && change < 0)
                 {
@@ -290,6 +293,9 @@ struct Agent
     }
     void enterState()
     {
+        if (s != NULL) {
+            s->Exit(this);
+        }     
         delete s;
         s = getState(status);
         s->Enter(this);
@@ -298,46 +304,42 @@ struct Agent
 
     void startToSocial()
     {
+        s->Exit(this);
         delete s;
         s = new Social;
         s->Enter(this);
-        type = s->type;
 
     }
     State* getState(std::string message)
     {
         //Plan to socialize
-        if (message == "Bored" && this->canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
+        if (message == "Bored") //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
         {
-            if (this->money >= 1000) //If not broke
+            if (this->canSocial == true && hour <= 19 && get<1>(date)->name == this->name)
             {
-                if (type != "Social") //If not already socializing
+                if (this->money >= 1000) //If not broke
                 {
-                    for (int i = 0; i < 4; i++) //Check through all agents
+                    if (type != "Social") //If not already socializing
                     {
-                        if (this != phone->getAgent(i)) //Check that caller isn't asking themselves to hang out
+                        for (int i = 0; i < 4; i++) //Check through all agents
                         {
-                            if (phone->dispatchMessage(this, phone->getAgent(i), "") == "Yes") //If agent says yes
+                            if (this != phone->getAgent(i)) //Check that caller isn't asking themselves to hang out
                             {
-                                this->date = std::make_tuple(clock->getHour() + 2, phone->getAgent(i));
-                                phone->getAgent(i)->date = std::make_tuple(clock->getHour() + 2, this); //Plan date
+                                std::string msg = phone->dispatchMessage(this, phone->getAgent(i));
+                                if (msg == "Yes") //If agent says yes
+                                {
+                                    this->date = std::make_tuple((int)clock->getHour() + 2, phone->getAgent(i));
+                                    phone->getAgent(i)->date = std::make_tuple((int)clock->getHour() + 2, this); //Plan date
+                                }
                             }
-                        }
+                        }                      
                     }
-                    //Make unable to socialize for 10 seconds (affected by speed variable)
-                    setCanSocial(false);
-                    //Find new state to enter
-                    message = this->isAnythingLow();
                 }
-
             }
-            else
-            {
-                //Make unable to socialize for 10 seconds (affected by speed variable)
-                this->setCanSocial(false);
-                //Find new state to enter
-                message = this->isAnythingLow();
-            }
+            //Find new state to enter
+            setCanSocial(!canSocial); //flipping canSocial is required to prevent isAnythingLow() from returning "Bored" again
+            message = this->isAnythingLow();
+            setCanSocial(!canSocial);
         }
         //Enter eat state
         if (message == "Hungry")
@@ -400,42 +402,42 @@ struct Agent
     bool amIFine()
     {
         //Check if state main stat is high enough to exit
-        if (s->type == "drinking")
+        if (type == "drinking")
         {
             if (thirst >= 8000)
             {
                 return true;
             }
         }
-        if (s->type == "eating")
+        if (type == "eating")
         {
             if (fullness >= 8000)
             {
                 return true;
             }
         }
-        if (s->type == "sleeping")
+        if (type == "sleeping")
         {
             if (energy >= 8000)
             {
                 return true;
             }
         }
-        if (s->type == "gathering")
+        if (type == "gathering")
         {
             if (money >= 5000)
             {
                 return true;
             }
         }
-        if (s->type == "mining")
+        if (type == "mining")
         {
             if (money >= 10000)
             {
                 return true;
             }
         }
-        if (s->type == "socializing")
+        if (type == "socializing")
         {
             if (happiness >= 8000 && get<1>(date)->happiness >= 8000)
             {
@@ -453,37 +455,37 @@ struct Agent
         }
         else
         {
-            if (s->type == "drinking")
+            if (type == "drinking")
             {
                 return true;
             }
-            if (s->type == "eating")
+            if (type == "eating")
             {
                 if (fullness >= 1000)
                 {
                     return true;
                 }
             }
-            if (s->type == "sleeping")
+            if (type == "sleeping")
             {
                 return false;
             }
-            if (s->type == "gathering")
+            if (type == "gathering")
             {
                 return true;
             }
-            if (s->type == "mining")
+            if (type == "mining")
             {
                 if (money >= 5000)
                 {
                     return true;
                 }
             }
-            if (s->type == "idling around")
+            if (type == "idling around")
             {
                 return true;
             }
-            if (s->type == "socializing")
+            if (type == "socializing")
             {
                 return true;
             }
@@ -501,7 +503,7 @@ struct Agent
 
         //Remove possibility of entering states if should be impossible
 
-        if (!canSocial || money < 1000) //remove entering social as an option
+        if (!canSocial || money < 1000 || get<1>(date)->name != this->name) //remove entering social as an option (if do have date)
         {
             arrs.pop_back();
         }

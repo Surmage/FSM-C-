@@ -125,11 +125,11 @@ void Mining::Exit(Agent* agent)
 void Social::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal, true);
-    agent->changeHappiness(0.5f, true);
+    agent->changeHappiness(3.0f * 8 / 2, true);
     agent->busy = true;
-    agent->changeHunger(0.5f, true);
-    agent->changeThirst(0.5f, true);
+    agent->changeEnergy(energyChangeVal, true);
+    agent->changeHunger(3.0f * 8 / 2, true);
+    agent->changeThirst(3.0f * 8, true);
     agent->busy = false;
 }
 void Social::Enter(Agent* agent)
@@ -146,6 +146,7 @@ void Social::Enter(Agent* agent)
 void Social::Exit(Agent* agent)
 {
     //Debug.Log(name + " exiting Social state");
+    agent->date = std::make_tuple(NULL, agent);
 }
 
 void Sleep::Execute(Agent* agent)
@@ -167,7 +168,6 @@ void Sleep::Enter(Agent* agent)
 void Sleep::Exit(Agent* agent)
 {
     //Debug.Log(name + " exiting Gather state");
-
 }
 
 void Dead::Execute(Agent* agent)

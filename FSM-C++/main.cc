@@ -49,14 +49,9 @@ int __stdcall wWinMain(
 
 	float prevFrame = 0;
 	float frames = 0;
-	int i = 2;
+	int i = 0;
 	bool isPaused = false;
 	int speed = 1;
-
-	v.push_back(a);
-	v.push_back(b);
-	v.push_back(c);
-	v.push_back(d);
 
 	high_resolution_clock::duration totalTime(0);
 	using clock = std::chrono::steady_clock;
@@ -64,15 +59,13 @@ int __stdcall wWinMain(
 	auto start = high_resolution_clock::now();
 	while (gui::isRunning)
 	{
+		t;
 		elapsed = std::chrono::steady_clock::now() - start;
 		if (!isPaused) {		
-			for (int j = 0; j < v.size(); j++) {
-				//Give agents a phone
-				v[j].setPhone(&t);
-				//Give agents a clock
-				v[j].setClock(&h);
-				v[j].Update(speed);
-			}
+			a.Update(speed);
+			b.Update(speed);
+			c.Update(speed);
+			d.Update(speed);
 			//std::cout << frames << std::endl;
 			float currentTime = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600; //roughly 1 hour per 2 seconds
 			float deltaTime = currentTime - prevFrame;
@@ -87,6 +80,12 @@ int __stdcall wWinMain(
 		gui::BeginRender();
 		gui::Render();
 
+		v.clear();
+		v.resize(0);
+		v.push_back(a);
+		v.push_back(b);
+		v.push_back(c);
+		v.push_back(d);
 		i = gui::SetupGUI(v[i].getMainStatValues(), v[i].getState(), v[i].getMoneyChar(), h.getTimeChar(), t.getMessageChat(), i);
 		isPaused = gui::PauseButtonF(isPaused);
 		speed = gui::SpeedSlider(speed);
