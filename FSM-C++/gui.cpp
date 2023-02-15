@@ -346,4 +346,5 @@ bool gui::PauseButtonF(bool isPaused) {
 	if (ImGui::Button("Pause", ImVec2(50, 50))) {
 		return !isPaused;
 	}
+	return isPaused;
 }

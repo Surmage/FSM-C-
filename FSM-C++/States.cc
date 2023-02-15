@@ -63,7 +63,7 @@ void Gather::Execute(Agent* agent)
 {
     //Change stat variables
     agent->changeEnergy(energyChangeVal, true);
-    agent->changeHunger(-statChangeVal * 1.5, true);
+    agent->changeHunger(-statChangeVal * 1.5f, true);
     agent->changeThirst(-statChangeVal * 2, true);
     agent->changeMoney(statChangeVal / 8, true);
     agent->changeHappiness(-statChangeVal / 2, true);
@@ -102,7 +102,7 @@ void Mining::Execute(Agent* agent)
 {
     //Change stat variables
     agent->changeEnergy(energyChangeVal, true);
-    agent->changeHunger(-statChangeVal * 1.5, true);
+    agent->changeHunger(-statChangeVal * 1.5f, true);
     agent->changeThirst(-statChangeVal * 2, true);
     agent->changeMoney(statChangeVal, true);
     agent->changeHappiness(-statChangeVal, true);
@@ -123,7 +123,7 @@ void Mining::Enter(Agent* agent)
 void Mining::Exit(Agent* agent)
 {
     //Chance for pickaxe to need repairing
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     int pickaxeBreakChance = rand() % 21; //5% chance
     if (pickaxeBreakChance == 0)
     {

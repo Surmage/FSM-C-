@@ -66,14 +66,14 @@ int __stdcall wWinMain(
 			c.Update(speed);
 			d.Update(speed);
 			//Roughly 1 hour per 2 seconds from testing
-			float currentTime = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600; 
+			float currentTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600.0f; 
 			float deltaTime = currentTime - prevFrame;
 			prevFrame = currentTime;
 			h.updateTime(deltaTime  * speed);
 		}
 		else {
 			//pause
-			prevFrame = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600;
+			prevFrame = (float)std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600.0f;
 		}
 
 		gui::BeginRender();

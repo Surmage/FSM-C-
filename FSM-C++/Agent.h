@@ -15,7 +15,7 @@ struct Agent
     float energy; //increased by sleeping, decreased through other states
     float happiness; //increased by eating and socializing, decreased through other states
     float money; //increased by working (gathering and mining), decreased through eating, socializing and repairing
-    float speed; //affects the rate at which the stats are affected
+    int speed; //affects the rate at which the stats are affected
 
     std::string type; //current type, referring to state
     std::string status; //current status, referring to mood of the agent, dictates which state they enter
@@ -62,9 +62,9 @@ struct Agent
         busy = false;
         needRepair = false;
         //randomize start values
-        float startValue1 = 4000 + rand() % 4001; //random between 4000 and 8000
-        float startValue2 = 2000;
-        float startValue3 = 4000 + rand() % 4001;
+        float startValue1 = 4000.f + rand() % 4001; //random between 4000 and 8000
+        float startValue2 = 2000.f;
+        float startValue3 = 4000.f + rand() % 4001;
         fullness = startValue1;
         thirst = startValue1;
         energy = startValue2;
@@ -565,7 +565,7 @@ struct Agent
             //Check if happiness is greater than 100, if it's 100, they cannot work
             if (happiness >= 100)
             {
-                srand(time(NULL));
+                srand((unsigned int)time(NULL));
                 // 20% chance to go mining, 40% chance to go gathering, 40% chance to go idle
                 int mood = rand() % 5;
                 if (mood == 4)
