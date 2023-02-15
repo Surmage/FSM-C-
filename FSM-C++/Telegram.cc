@@ -6,7 +6,7 @@ Telegram::Telegram() :
     a(a), b(b), c(c), d(d)
 {}
 Telegram::Telegram(Agent& aa, Agent& bb, Agent& cc, Agent& dd) :
-	a(aa), b(bb), c(cc), d(dd), chat("Chat:")
+	a(aa), b(bb), c(cc), d(dd), chat("Chat:\n")
 {}
 
 Agent* Telegram::getAgent(int i) {
@@ -73,14 +73,27 @@ char* Telegram::getMessageChat() {
 }
 void Telegram::updateMessageText(std::string msg)
 {
-    sprintf(chat, "%s", msg.c_str());
-    //chat += buf;
+    sprintf(chat, "%s\n%s", chat, msg.c_str());
+    int count = 0;
 
-    //int numLines = messagesText.text.Split('\n').Length;
-    ////Remove upper messages
-    //if (numLines > 6)
-    //{
-    //    string[] items = messagesText.text.Split('\n');
-    //    messagesText.text = items[1] + "\n" + items[2] + "\n" + items[3] + "\n" + items[4] + "\n" + items[5] + "\n";
-    //}
+    char* str = chat;
+    int size = strlen(str);
+    char buf[200];
+    int j = 0;
+    for (int i = 0;  i < size; i++) {
+        str++;
+        if (*str == '\n') {
+            count++;
+        }
+        if (count >= 3) {
+            //Write rest of char array into buf
+            buf[j] = *str;
+            j++;
+        }
+    }
+    
+    if (count > 7) {
+        //new char array is set to buf
+        sprintf(chat, "Chat:\n %s", buf);
+    }
 }

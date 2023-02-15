@@ -139,12 +139,10 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="InterfaceManager.h" />
     <ClInclude Include="States.h" />
     <ClInclude Include="Telegram.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Agent.cc" />
     <ClCompile Include="gui.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -156,7 +154,6 @@
     <ClCompile Include="main.cc" />
     <ClCompile Include="States.cc" />
     <ClCompile Include="Telegram.cc" />
-    <ClCompile Include="TimeManager.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

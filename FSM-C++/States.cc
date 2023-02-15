@@ -52,10 +52,10 @@ void Gather::Execute(Agent* agent)
 {
     //Change stat variables
     agent->changeEnergy(energyChangeVal, true);
-    agent->changeHunger(-3.0f * 2, true);
-    agent->changeThirst(-3.0f * 4, true);
-    agent->changeMoney(3.0f, true);
-    agent->changeHappiness(-3.0f, true);
+    agent->changeHunger(-3.0f * 1.5, true);
+    agent->changeThirst(-3.0f * 2, true);
+    agent->changeMoney(3.0f / 8, true);
+    agent->changeHappiness(-3.0f / 2, true);
 }
 void Gather::Enter(Agent* agent)
 {
@@ -76,7 +76,7 @@ void Idle::Execute(Agent* agent)
     agent->changeEnergy(energyChangeVal, true);
     agent->changeHunger(-3.0f * 1.5f, true);
     agent->changeThirst(-3.0f * 2, true);
-    agent->changeHappiness(-3.0f, true);
+    agent->changeHappiness(-3.0f / 2, true);
 }
 void Idle::Enter(Agent* agent)
 {
@@ -95,9 +95,9 @@ void Mining::Execute(Agent* agent)
 {
     //Change stat variables
     agent->changeEnergy(energyChangeVal, true);
-    agent->changeHunger(-3.0f * 2, true);
-    agent->changeThirst(-3.0f * 4, true);
-    agent->changeMoney(3.0f * 3, true);
+    agent->changeHunger(-3.0f * 1.5, true);
+    agent->changeThirst(-3.0f * 2, true);
+    agent->changeMoney(3.0f, true);
     agent->changeHappiness(-3.0f, true);
 }
 void Mining::Enter(Agent* agent)
@@ -118,7 +118,21 @@ void Mining::Enter(Agent* agent)
 
 void Mining::Exit(Agent* agent)
 {
-    //Debug.Log(name + " exiting Gather state");
+    //Chance for pickaxe to need repairing
+    srand(time(NULL));
+    int pickaxeBreakChance = rand() % 21;
+    if (pickaxeBreakChance == 0)
+    {
+        agent->needRepair = true;
+        //Pay for repair if possible
+        if (agent->money >= 3000)
+        {
+            agent->busy = true;
+            agent->changeMoney(-1500.0f, false);
+            agent->needRepair = false;
+            agent->busy = false;
+        }
+    }
 
 }
 

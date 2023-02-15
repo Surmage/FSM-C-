@@ -3,7 +3,6 @@
 #include <vector>
 #include <tuple>
 #include <algorithm>
-#include <ctime>
 #include "Telegram.h"
 #include "TimeManager.h"
 #include "States.h"
@@ -507,7 +506,7 @@ struct Agent
         {
             arrs.pop_back();
         }
-        if (needRepair && money < 1700) //remove mining as an option
+        if (needRepair && money < 3000) //remove mining as an option
         {
             arrs.erase(arrs.begin() + 3);
         }
@@ -547,9 +546,16 @@ struct Agent
             //Enter Idle or Gathering 
             if (happiness >= 0)
             {
-                srand(time(NULL)); //reset rng seed
-                float mood = rand() % 3;
-                if (mood == 2)
+                srand(time(NULL));
+                int mood = rand() % 5;
+                if (mood == 4)
+                {
+                    if (status != "Poor")
+                    {
+                        return "Poor";
+                    }
+                }
+                else if (mood == 2 || mood == 3)
                 {
                     if (status != "Fine")
                     {
@@ -701,5 +707,9 @@ struct Agent
         char buf[20];      
         sprintf_s(buf, "Money: %i", (int)money);
         return buf;
+
     }
+    void sendMessage(char* msg) {
+        phone->updateMessageText(msg);
+    }   
 };
