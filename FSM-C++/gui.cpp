@@ -306,7 +306,7 @@ int gui::SetupGUI(int* arr, char* values, char* money, char* timeValues, char* c
 	ImGui::SetCursorPos(ImVec2(400, 400));
 	ImGui::Text(values);
 
-	ImGui::SetCursorPos(ImVec2(800, 400));
+	ImGui::SetCursorPos(ImVec2(700, 400));
 	ImGui::Text(chat);
 
 	ImGui::SetCursorPos(ImVec2(75, 600));

@@ -42,6 +42,7 @@ bool Telegram::askForMoney(Agent* caller)
                 caller->changeHappiness(2000, false); //caller is happy to have been helped
                 getAgent(i)->busy = false;
                 caller->busy = false;
+                updateMessageText(caller->name + " received money from " + getAgent(i)->name);
                 return true;
             }
         }

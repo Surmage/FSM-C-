@@ -225,6 +225,7 @@ struct Agent
                 changeThirst(-1500, false);
                 changeMoney(-1000, false);
                 busy = false;
+                sendMessage(name + " passed out.");
                 checkShouldEnter();
                 return;
             }
@@ -565,7 +566,6 @@ struct Agent
             //Check if happiness is greater than 100, if it's 100, they cannot work
             if (happiness >= 100)
             {
-                srand((unsigned int)time(NULL));
                 // 20% chance to go mining, 40% chance to go gathering, 40% chance to go idle
                 int mood = rand() % 5;
                 if (mood == 4)

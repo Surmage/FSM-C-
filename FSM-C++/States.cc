@@ -117,26 +117,18 @@ void Mining::Enter(Agent* agent)
         agent->needRepair = false;
         agent->changeMoney(-1500, false);
         agent->busy = false;
+        agent->sendMessage(agent->name + " repaired their pickaxe.");
     }
 }
 
 void Mining::Exit(Agent* agent)
 {
     //Chance for pickaxe to need repairing
-    srand((unsigned int)time(NULL));
     int pickaxeBreakChance = rand() % 21; //5% chance
     if (pickaxeBreakChance == 0)
     {
         agent->needRepair = true;
-        //Pay for repair if possible
-        if (agent->money >= 3000)
-        {
-            //Busy prevents function calls to change states
-            agent->busy = true;
-            agent->changeMoney(-1500.0f, false);
-            agent->needRepair = false;
-            agent->busy = false;
-        }
+        agent->sendMessage(agent->name + "'s pickaxe broke.");
     }
 
 }
