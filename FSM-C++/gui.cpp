@@ -258,6 +258,7 @@ void gui::EndGUI() noexcept {
 
 int gui::SetupGUI(int* arr, char* values, char* money, char* timeValues, char* chat, int i){
 
+	//Agent buttons
 	ImGui::SetCursorPos(ImVec2(400, 25));
 	if (ImGui::Button("Agent1", ImVec2(50, 50))) {
 		return 0;
@@ -278,6 +279,7 @@ int gui::SetupGUI(int* arr, char* values, char* money, char* timeValues, char* c
 		return 3;
 	}
 
+	//Stat bars
 	ImGui::PushStyleColor(ImGuiCol_SliderGrab, IM_COL32(0, 255, 0, 255));
 	ImGui::VSliderInt("", ImVec2(50, 500), &arr[0], 0, 8000);
 	ImGui::PopStyleColor();
@@ -297,6 +299,7 @@ int gui::SetupGUI(int* arr, char* values, char* money, char* timeValues, char* c
 	ImGui::VSliderInt("", ImVec2(50, 500), &arr[3], 0, 8000);
 	ImGui::PopStyleColor();
 
+	//Texts
 	ImGui::SetCursorPos(ImVec2(750, 50));
 	ImGui::Text(timeValues);
 
@@ -309,6 +312,20 @@ int gui::SetupGUI(int* arr, char* values, char* money, char* timeValues, char* c
 	ImGui::SetCursorPos(ImVec2(75, 600));
 	ImGui::Text(money);
 
+	//Text for stat bars
+	ImGui::SetCursorPos(ImVec2(5, 25));
+	ImGui::Text("Fullness");
+
+	ImGui::SetCursorPos(ImVec2(60, 50));
+	ImGui::Text("Hydration");
+
+	ImGui::SetCursorPos(ImVec2(125, 25));
+	ImGui::Text("Energy");
+
+	ImGui::SetCursorPos(ImVec2(175, 50));
+	ImGui::Text("Happiness");
+
+	//Speed slider
 	char txt_def[] = "Enter speed";
 	ImGui::SetCursorPos(ImVec2(200, 700));
 	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));

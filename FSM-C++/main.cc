@@ -32,8 +32,6 @@ int __stdcall wWinMain(
 	
 	Telegram t(a, b, c, d);
 	TimeManager h;
-	//t.getValue(1);
-	//t.getValue(3);
 
 	//Give agents a phone
 	a.setPhone(&t);
@@ -57,17 +55,18 @@ int __stdcall wWinMain(
 	using clock = std::chrono::steady_clock;
 	clock::duration elapsed = {};
 	auto start = high_resolution_clock::now();
+
 	while (gui::isRunning)
 	{
-		t;
 		elapsed = std::chrono::steady_clock::now() - start;
-		if (!isPaused) {		
+		if (!isPaused) {
+			//Update agents
 			a.Update(speed);
 			b.Update(speed);
 			c.Update(speed);
 			d.Update(speed);
-			//std::cout << frames << std::endl;
-			float currentTime = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600; //roughly 1 hour per 2 seconds
+			//Roughly 1 hour per 2 seconds from testing
+			float currentTime = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() / 600; 
 			float deltaTime = currentTime - prevFrame;
 			prevFrame = currentTime;
 			h.updateTime(deltaTime  * speed);

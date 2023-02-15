@@ -8,9 +8,9 @@ struct State
 {
     std::string type;
     float energyChangeVal;
-    //GameObject agent;
-    //GameObject manager;
-    //InterfaceManager im;
+    float statChangeVal;
+
+    State();
 
     virtual void Enter(Agent* agent) = 0;
 
@@ -18,17 +18,9 @@ struct State
 
     virtual void Exit(Agent* agent) = 0;
 
-    State() {
-    }
-    void setStartValues(std::string type)
-    {
-        //manager = GameObject.Find("InterfaceManager");
-        //im = manager.GetComponent<InterfaceManager>();
-        this->type = type;
-        energyChangeVal = -3.0f;
-    }
+    void setStartValues(std::string type);
 };
-//
+
 struct Dead : State
 {
     virtual void Execute(Agent* agent);
