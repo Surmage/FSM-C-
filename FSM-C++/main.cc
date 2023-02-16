@@ -51,6 +51,8 @@ int __stdcall wWinMain(
 	bool isPaused = false;
 	int speed = 1;
 
+	srand((unsigned)time(NULL));
+
 	high_resolution_clock::duration totalTime(0);
 	using clock = std::chrono::steady_clock;
 	clock::duration elapsed = {};

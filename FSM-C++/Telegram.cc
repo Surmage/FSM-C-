@@ -30,7 +30,7 @@ bool Telegram::askForMoney(Agent* caller)
     //Check through all contacts (agents)
     for (int i = 0; i < 4; i++)
     {
-        if (caller != getAgent(i)) //To avoid asking themselves for money
+        if (caller->name != getAgent(i)->name) //To avoid asking themselves for money
         {
             if (getAgent(i)->money >= 1500 && getAgent(i)->status != "Sleep" && getAgent(i)->status != "Dead")
             {
@@ -49,7 +49,7 @@ bool Telegram::askForMoney(Agent* caller)
     }
     return false;
 }
-std::string Telegram::dispatchMessage(Agent* sender, Agent* receiver)
+std::string Telegram::dispatchMessage(Agent* receiver)
 {
     std::string msg;
     //If friend can social

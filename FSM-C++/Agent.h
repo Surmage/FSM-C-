@@ -331,7 +331,7 @@ struct Agent
     State* getState(std::string message)
     {
         //Plan to socialize
-        if (message == "Bored") //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
+        if (message == "Bored")
         {
             if (this->canSocial == true && hour <= 19 && get<1>(date)->name == this->name)
             {
@@ -343,7 +343,7 @@ struct Agent
                         {
                             if (this != phone->getAgent(i)) //Check that caller isn't asking themselves to hang out
                             {
-                                std::string msg = phone->dispatchMessage(this, phone->getAgent(i));
+                                std::string msg = phone->dispatchMessage(phone->getAgent(i));
                                 if (msg == "Yes") //If agent says yes
                                 {
                                     this->date = std::make_tuple((int)clock->getHour() + 2, phone->getAgent(i));
