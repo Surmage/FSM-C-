@@ -1,4 +1,3 @@
-#pragma once
 #include "States.h"
 #include "Agent.h"
 

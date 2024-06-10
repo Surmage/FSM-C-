@@ -1,10 +1,8 @@
 #include <iostream>
-#include <thread>
-#include <chrono>
+#include "Agent.h"
 #include "imgui.h"
 #include "imgui-SFML.h"
-#include "Agent.cc"
-using namespace std::chrono;
+#include <SFML/Graphics.hpp>
 
 //int __stdcall wWinMain(
 //	HINSTANCE instance,
@@ -107,6 +105,97 @@ using namespace std::chrono;
 //}
 
 int main() {
-	Agent a;
+	//create actor 1
+	char txtAgent1[] = "Agent1";
+	Agent a(txtAgent1);
+	//create actor 2
+	char txtAgent2[] = "Agent2";
+	Agent b(txtAgent2);
+	//create actor 3
+	char txtAgent3[] = "Agent3";
+	Agent c(txtAgent3);
+	//create actor 4
+	char txtAgent4[] = "Agent4";
+	Agent d(txtAgent4);
+
+	
+	Telegram t(a, b, c, d);
+	TimeManager h;
+
+	//Give agents a phone
+	a.setPhone(&t);
+	b.setPhone(&t);
+	c.setPhone(&t);
+	d.setPhone(&t);
+
+	//Give agents a clock
+	a.setClock(&h);
+	b.setClock(&h);
+	c.setClock(&h);
+	d.setClock(&h);
+
+	sf::RenderWindow window(sf::VideoMode(640, 480), "ImGui + SFML = <3");
+	window.setFramerateLimit(60);
+	ImGui::SFML::Init(window);
+	sf::CircleShape shape(100.f);
+	shape.setFillColor(sf::Color::Green);
+
+
+	sf::Clock deltaClock;
+
+	float prevFrame = 0;
+	float frames = 0;
+	int i = 0;
+	bool isPaused = false;
+	int speed = 1;
+	sf::Time start;
+	sf::Time elapsed;
+	start = deltaClock.getElapsedTime();
+
+	srand((unsigned)time(NULL));
+
+	while (window.isOpen()) {
+		elapsed = deltaClock.getElapsedTime() - start;
+		if (!isPaused) {
+			//Update agents
+			a.Update(speed);
+			b.Update(speed);
+			c.Update(speed);
+			d.Update(speed);
+			//Roughly 1 hour per 2 seconds from testing
+			float currentTime = (float)elapsed.asMicroseconds() / 600.0f; 
+			float deltaTime = currentTime - prevFrame;
+			prevFrame = currentTime;
+			h.updateTime(deltaTime  * speed);
+		}
+		else {
+			//pause
+			prevFrame = (float)elapsed.asMicroseconds() / 600.0f;
+		}
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			ImGui::SFML::ProcessEvent(window, event);
+
+			if (event.type == sf::Event::Closed) {
+				window.close();
+			}
+		}
+
+		ImGui::SFML::Update(window, deltaClock.restart());
+
+		//ImGui::ShowDemoWindow();
+
+		ImGui::Begin("Hello, world!");
+		ImGui::Button("Look at this pretty button");
+		ImGui::End();
+
+		window.clear();
+		window.draw(shape);
+		ImGui::SFML::Render(window);
+		window.display();
+	}
+
+	ImGui::SFML::Shutdown();
+
 	return 0;
 }
