@@ -1,10 +1,9 @@
-#include "Agent.h"
 #include <iostream>
-#include "gui.h"
 #include <thread>
 #include <chrono>
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include "Agent.cc"
 using namespace std::chrono;
 
 //int __stdcall wWinMain(
@@ -108,5 +107,6 @@ using namespace std::chrono;
 //}
 
 int main() {
+	Agent a;
 	return 0;
 }
