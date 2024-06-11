@@ -8,6 +8,20 @@
 #include "States.h"
 #include <sstream>
 
+struct Stats {
+    float fullness; //increased by eating, decreased through other states
+    float maxFullness;
+    float thirst; //increased by eating, drinking and socializing, decreased through other states
+    float maxThirst;
+    float energy; //increased by sleeping, decreased through other states
+    float maxEnergy;
+    float happiness; //increased by eating and socializing, decreased through other states
+    float maxHappiness;
+    float money; //increased by working (gathering and mining), decreased through eating, socializing and repairing
+
+    Stats();
+};
+
 struct Agent
 {
     float fullness; //increased by eating, decreased through other states

@@ -1,5 +1,17 @@
 #include "Agent.h"
 
+Stats::Stats() {
+    fullness = 8000;
+    thirst = 8000;
+    energy = 8000;
+    happiness = 8000;
+    money = 8000;
+    maxFullness = 8000;
+    maxThirst = 8000;
+    maxEnergy = 8000;
+    maxHappiness = 8000;
+}
+
 Agent::Agent() {
     fullness = 8000;
     thirst = 8000;

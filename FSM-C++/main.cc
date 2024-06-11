@@ -134,11 +134,25 @@ int main() {
 	c.setClock(&h);
 	d.setClock(&h);
 
-	sf::RenderWindow window(sf::VideoMode(640, 480), "ImGui + SFML = <3");
+	sf::RenderWindow window(sf::VideoMode(640, 480), "FSM");
 	window.setFramerateLimit(60);
 	ImGui::SFML::Init(window);
 	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	//sf::RectangleShape rect(100.f, 100.f);
+	shape.setFillColor(sf::Color::White);
+	//rect.setFillColor(sf::Color::Green);
+	sf::Font font;
+	if (!font.loadFromFile("tahoma.ttf"))
+	{
+		// error...
+	}
+	sf::Text text;
+	text.setString("Hello");
+	text.setFont(font);
+	text.setCharacterSize(24);
+	text.setFillColor(sf::Color::Black);
+	text.setPosition(50,10);
+
 
 
 	sf::Clock deltaClock;
@@ -151,7 +165,7 @@ int main() {
 	sf::Time start;
 	sf::Time elapsed;
 	start = deltaClock.getElapsedTime();
-
+	
 	srand((unsigned)time(NULL));
 
 	while (window.isOpen()) {
@@ -162,10 +176,13 @@ int main() {
 			b.Update(speed);
 			c.Update(speed);
 			d.Update(speed);
+			std::cout << a.status << " " << a.energy << " Hour: " << a.hour << std::endl;
+			
 			//Roughly 1 hour per 2 seconds from testing
 			float currentTime = (float)elapsed.asMicroseconds() / 600.0f; 
 			float deltaTime = currentTime - prevFrame;
 			prevFrame = currentTime;
+			//std::cout << currentTime << std::endl;
 			h.updateTime(deltaTime  * speed);
 		}
 		else {
@@ -181,16 +198,23 @@ int main() {
 			}
 		}
 
-		ImGui::SFML::Update(window, deltaClock.restart());
+		ImGui::SFML::Update(window, deltaClock.getElapsedTime());
 
 		//ImGui::ShowDemoWindow();
 
 		ImGui::Begin("Hello, world!");
 		ImGui::Button("Look at this pretty button");
+		ImGui::SliderInt("speed", &speed, 0, 10);
 		ImGui::End();
+		text.setString(a.type + "\n" + 
+			"Energy: " + std::to_string(a.energy) + "\n" +
+			"Money: " + std::to_string(a.money) + "\n" +
+			"Fullness: " + std::to_string(a.fullness) + "\n" +
+			"Thirst: " + std::to_string(a.thirst));
 
 		window.clear();
 		window.draw(shape);
+		window.draw(text);
 		ImGui::SFML::Render(window);
 		window.display();
 	}
