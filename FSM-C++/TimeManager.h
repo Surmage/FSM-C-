@@ -10,3 +10,12 @@ struct TimeManager {
     char* getTimeChar();
     
 };
+
+struct StepManager {
+    float step;
+    StepManager();
+    void updateStep(int &increment);
+    int getDay();
+    int getHour();
+    int getMinute();
+};

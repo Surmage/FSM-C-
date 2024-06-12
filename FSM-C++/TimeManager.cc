@@ -31,3 +31,34 @@ char* TimeManager::getTimeChar() {
     return buf;
 
 }
+
+StepManager::StepManager() {
+    step = 0;
+}
+void StepManager::updateStep(int& increment) {
+    if(increment != -1 && step != 0)
+        step += increment;
+}
+int StepManager::getDay() {
+    //1 step = 10 minutes => 1 day = 6 * 24 = 144 steps
+    float day = step / 144;
+    int roundedDay = (int)day;
+    return roundedDay;
+}
+int StepManager::getHour() {
+    float hour = step / 6;
+    int day = getDay();
+    if (day >= 1)
+    {
+        hour = hour - 24 * getDay();
+    }
+    return hour;
+}
+
+int StepManager::getMinute() {
+    int roundedHour = getHour();
+    float hour = step / 6 - 24 * getDay();
+    float min = hour - roundedHour;
+    min = 60 * min;
+    return (int)min;
+}

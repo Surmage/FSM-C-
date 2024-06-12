@@ -153,6 +153,13 @@ int main() {
 	text.setFillColor(sf::Color::Black);
 	text.setPosition(50,10);
 
+	sf::Text timeText;
+	timeText.setString("Hello");
+	timeText.setFont(font);
+	timeText.setCharacterSize(24);
+	timeText.setFillColor(sf::Color::White);
+	timeText.setPosition(300, 10);
+
 
 
 	sf::Clock deltaClock;
@@ -168,15 +175,21 @@ int main() {
 	
 	srand((unsigned)time(NULL));
 
+	StepManager sm;
+	sm.step = 8;
+	int step = 0;
+	
+	
+
 	while (window.isOpen()) {
 		elapsed = deltaClock.getElapsedTime() - start;
 		if (!isPaused) {
 			//Update agents
-			a.Update(speed);
-			b.Update(speed);
-			c.Update(speed);
-			d.Update(speed);
-			std::cout << a.status << " " << a.energy << " Hour: " << a.hour << std::endl;
+			a.Update(sm.getHour());
+			b.Update(sm.getHour());
+			c.Update(sm.getHour());
+			d.Update(sm.getHour());
+			//std::cout << a.status << " " << a.energy << " Hour: " << a.hour << std::endl;
 			
 			//Roughly 1 hour per 2 seconds from testing
 			float currentTime = (float)elapsed.asMicroseconds() / 600.0f; 
@@ -199,24 +212,33 @@ int main() {
 		}
 
 		ImGui::SFML::Update(window, deltaClock.getElapsedTime());
-
+		step++;
 		//ImGui::ShowDemoWindow();
-
 		ImGui::Begin("Hello, world!");
 		ImGui::Button("Look at this pretty button");
 		ImGui::SliderInt("speed", &speed, 0, 10);
+		ImGui::InputInt("Step", &step, 1, 1);
 		ImGui::End();
+
+		sm.step = step;
 		text.setString(a.type + "\n" + 
-			"Energy: " + std::to_string(a.energy) + "\n" +
-			"Money: " + std::to_string(a.money) + "\n" +
-			"Fullness: " + std::to_string(a.fullness) + "\n" +
-			"Thirst: " + std::to_string(a.thirst));
+			"Energy: " + std::to_string(a.stats.energy) + "\n" +
+			"Money: " + std::to_string(a.stats.money) + "\n" +
+			"Fullness: " + std::to_string(a.stats.fullness) + "\n" +
+			"Thirst: " + std::to_string(a.stats.thirst));
+
+		timeText.setString("Day: " + std::to_string(sm.getDay()) + 
+			" Hour: " + std::to_string(sm.getHour()) +
+			" Minute: " + std::to_string(sm.getMinute()));
 
 		window.clear();
 		window.draw(shape);
 		window.draw(text);
+		window.draw(timeText);
 		ImGui::SFML::Render(window);
+		sf::sleep(sf::milliseconds(500));
 		window.display();
+		
 	}
 
 	ImGui::SFML::Shutdown();

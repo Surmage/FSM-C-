@@ -31,7 +31,7 @@ bool Telegram::askForMoney(Agent* caller)
     {
         if (caller->name != getAgent(i)->name) //To avoid asking themselves for money
         {
-            if (getAgent(i)->money >= 1500 && getAgent(i)->status != "Sleep" && getAgent(i)->status != "Dead")
+            if (getAgent(i)->stats.money >= 1500 && getAgent(i)->status != "Sleep" && getAgent(i)->status != "Dead")
             {
                 //"busy" being true prevents the state from being changed
                 getAgent(i)->busy = true;
@@ -52,12 +52,12 @@ std::string Telegram::dispatchMessage(Agent* receiver)
 {
     std::string msg;
     //If friend can social
-    if (receiver->money >= 2000 && receiver->canISocial() && receiver->busy == false && receiver->status != "Dead")
+    if (receiver->stats.money >= 2000 && receiver->canISocial() && receiver->busy == false && receiver->status != "Dead")
     {
         msg = "Yes";      
     }
     //If friend doesn't have the money
-    else if (receiver->money <= 2000)
+    else if (receiver->stats.money <= 2000)
     {
         msg = "I'm too poor";
     }

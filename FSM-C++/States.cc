@@ -7,15 +7,15 @@ State::State()
     //3 represents taking 16 hours for stat to fill (Increase by 8000)
     //Multiplying it decreases the time it would take, example: 3 * 2 would take 8 hours, 3 * 8 would take 2 hours
     //Dividing it increases the time it would take, example: 3 / 2 would take 16 hours
-    energyChangeVal = -3.0f; 
-    statChangeVal = 3.0f;
+    energyChangeVal = -167.f; 
+    statChangeVal = 1333.f;
 }
 
 void State::setStartValues(std::string type)
 {
     this->type = type;
-    energyChangeVal = -3.0f;
-    statChangeVal = 3.0f;
+    energyChangeVal = -167.f;
+    statChangeVal = 1333.f;
 }
 void Drink::Execute(Agent* agent)
 {
@@ -163,10 +163,10 @@ void Sleep::Execute(Agent* agent)
     //Change stat variables
     //Busy prevents function calls to change states
     agent->busy = true;
-    agent->changeHunger(-statChangeVal / 3, true);
-    agent->changeThirst(-statChangeVal / 3, true);
+    agent->changeHunger(-statChangeVal * 0.01f, true);
+    agent->changeThirst(-statChangeVal * 0.01f, true);
     agent->busy = false;
-    agent->changeEnergy(-energyChangeVal * 2, true);
+    agent->changeEnergy(-energyChangeVal, true);
 }
 void Sleep::Enter(Agent* agent)
 {
