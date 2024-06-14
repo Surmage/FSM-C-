@@ -47,7 +47,7 @@ Agent::Agent(std::string name) {
     float startValue3 = 50.f + rand() % 50;
     stats.fullness = startValue1;
     stats.thirst = startValue1;
-    stats.energy = startValue2;
+    stats.energy = 1;
     stats.money = startValue3;
     stats.happiness = startValue3;
     status = "Sleepy"; //start program asleep
@@ -89,6 +89,7 @@ void Agent::Update(int cHour)
         {
             if (status != "Dead")
             {
+                std::cout << type << std::endl;
                 delete s;
                 status = "Dead";
                 s = getState(status);
@@ -135,7 +136,7 @@ void Agent::Update(int cHour)
     {
         if (stats.fullness >= 0 && stats.fullness <= stats.maxFullness)
         {
-            if (s->type != "sleeping" || stats.fullness >= stats.maxFullness * 0.1f) {
+            {
                 
                 if(affectedByTime)
                     stats.fullness += change * speed;
@@ -164,7 +165,7 @@ void Agent::Update(int cHour)
     {
         if (stats.thirst >= 0 && stats.thirst <= stats.maxThirst)
         {
-            if (s->type != "sleeping" || stats.maxThirst >= stats.maxThirst * 0.1f) {
+            {
                 if (affectedByTime)
                     stats.thirst += change * speed;
                 else
@@ -172,7 +173,7 @@ void Agent::Update(int cHour)
                 if (!busy)
                 {
                     //If too low
-                    if (stats.thirst <= 1000 && change < 0)
+                    if (stats.thirst <= stats.maxThirst * 0.1f && change < 0)
                     {
                         checkShouldEnter();
 
@@ -189,7 +190,7 @@ void Agent::Update(int cHour)
     }
     void Agent::changeEnergy(float change, bool affectedByTime)
     {
-        if (stats.energy >= 0 && stats.energy <= 8000)
+        if (stats.energy >= 0 && stats.energy <= stats.maxEnergy)
         {
             if (affectedByTime)
                 stats.energy += change * speed;
@@ -200,9 +201,9 @@ void Agent::Update(int cHour)
             {
                 //busy prevents certain function calls
                 busy = true;
-                changeHunger(-1500, false);
-                changeThirst(-1500, false);
-                changeMoney(-1000, false);
+                changeHunger(-15, false);
+                changeThirst(-15, false);
+                changeMoney(-50, false);
                 busy = false;
                 sendMessage(name + " passed out.");
                 checkShouldEnter();
@@ -211,7 +212,7 @@ void Agent::Update(int cHour)
             if (!busy)
             {               
                 //If too low
-                if (stats.energy <= 1000 && change < 0)
+                if (stats.energy <= stats.maxEnergy * 0.1f && change < 0)
                 {
                     if (s->type == "socializing" && amIFine()) //stay up if socializing and not satisfied yet
                     {
@@ -223,8 +224,11 @@ void Agent::Update(int cHour)
                     }
                 }
                 //If too high
-                else if (change > 0 && hour >= 6 && hour <= 9) //Wake up between 8 and 9 if sleeping
+                else if (change > 0 && hour >= 6 && stats.energy >= stats.maxEnergy * 0.9f) //Wake up between 8 and 9 if sleeping
                 {
+                    checkShouldEnter();
+                }
+                else if (change > 0 && hour >= 9) {
                     checkShouldEnter();
                 }
             }
@@ -264,7 +268,7 @@ void Agent::Update(int cHour)
         if (!busy)
         {
             //if too low
-            if (stats.happiness <= 2000 && change < 0 && canSocial)
+            if (stats.happiness <= stats.maxHappiness * 0.2f && change < 0 && canSocial)
             {
                 checkShouldEnter();
             }
@@ -315,7 +319,7 @@ void Agent::Update(int cHour)
         {
             if (this->canSocial == true && hour <= 19 && std::get<1>(date)->name == this->name)
             {
-                if (this->stats.money >= 1000) //If not broke
+                if (this->stats.money >= 100) //If not broke
                 {
                     if (type != "Social") //If not already socializing
                     {
@@ -403,42 +407,42 @@ void Agent::Update(int cHour)
         //Check if state main stat is high enough to exit
         if (type == "drinking")
         {
-            if (stats.thirst >= 8000)
+            if (stats.thirst >= stats.maxThirst * 0.9f)
             {
                 return true;
             }
         }
         if (type == "eating")
         {
-            if (stats.fullness >= 8000)
+            if (stats.fullness >= stats.maxFullness * 0.9f)
             {
                 return true;
             }
         }
         if (type == "sleeping")
         {
-            if (stats.energy >= 8000)
+            if (stats.energy >= stats.maxFullness * 0.9f)
             {
                 return true;
             }
         }
         if (type == "gathering")
         {
-            if (stats.money >= 5000)
+            if (stats.money >= 500)
             {
                 return true;
             }
         }
         if (type == "mining")
         {
-            if (stats.money >= 10000)
+            if (stats.money >= 500)
             {
                 return true;
             }
         }
         if (type == "socializing")
         {
-            if (stats.happiness >= 8000 && std::get<1>(date)->stats.happiness >= 8000)
+            if (stats.happiness >= stats.maxHappiness * 0.9f && std::get<1>(date)->stats.happiness >= stats.maxHappiness * 0.9f)
             {
                 return true;
             }
@@ -448,7 +452,7 @@ void Agent::Update(int cHour)
     bool Agent::canISocial()
     {
         //Check if state money stat is high enough to socialize
-        if (stats.money <= 1700)
+        if (stats.money <= 100)
         {
             return false;
         }
@@ -460,7 +464,7 @@ void Agent::Update(int cHour)
             }
             if (type == "eating")
             {
-                if (stats.fullness >= 1000)
+                if (stats.fullness >= stats.maxFullness * 0.1f)
                 {
                     return true;
                 }
@@ -475,7 +479,7 @@ void Agent::Update(int cHour)
             }
             if (type == "mining")
             {
-                if (stats.money >= 5000)
+                if (stats.money >= 500)
                 {
                     return true;
                 }
@@ -503,19 +507,19 @@ void Agent::Update(int cHour)
 
         //Remove possibility of entering states if should be impossible
 
-        if (!canSocial || stats.money < 1000 || std::get<1>(date)->name != this->name) //remove entering social as an option (if do have date)
+        if (!canSocial || stats.money < 100 || std::get<1>(date)->name != this->name) //remove entering social as an option (if do have date)
         {
             arrs.pop_back();
         }
-        if (needRepair && stats.money < 3000) //remove mining as an option
+        if (needRepair && stats.money < 30) //remove mining as an option
         {
             arrs.erase(arrs.begin() + 3);
         }
-        else if (stats.energy <= 1000 || stats.happiness <= 1000) //remove mining as an option too
+        else if (stats.energy <= stats.maxEnergy * 0.1f || stats.happiness <= stats.maxHappiness * 0.1f) //remove mining as an option too
         {
             arrs.erase(arrs.begin() + 3);
         }
-        if (stats.fullness <= 1000 && stats.money < 200) //check if hungry and poor
+        if (stats.fullness <= stats.maxFullness * 0.1f && stats.money < 15) //check if hungry and poor
         {
             if (timesAskedForHelp <= 4) //can only receive money for food 4 times before friends stop
             {
@@ -537,7 +541,7 @@ void Agent::Update(int cHour)
         sort(arrs.begin(), arrs.end()); //sort
 
         //Return stat that is the lowest
-        if (std::get<0>(arrs[0]) <= 1000)
+        if (std::get<0>(arrs[0]) <= 10)
         {
             return std::get<1>(arrs[0]);
         }
@@ -545,7 +549,7 @@ void Agent::Update(int cHour)
         else
         {
             //Check if happiness is greater than 100, if it's 100, they cannot work
-            if (stats.happiness >= 100)
+            if (stats.happiness >= stats.maxHappiness * 0.1f)
             {
                 // 20% chance to go mining, 40% chance to go gathering, 40% chance to go idle
                 int mood = rand() % 5;
