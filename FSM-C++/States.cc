@@ -20,7 +20,7 @@ void State::setStartValues(std::string type)
 void Drink::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal, true);
+    agent->changeEnergy(energyChangeVal * 0.5f, true);
     agent->changeThirst(statChangeVal * 20, true);
 }
 void Drink::Enter(Agent* agent)
@@ -36,7 +36,7 @@ void Drink::Exit(Agent* agent)
 void Eat::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal, true);
+    agent->changeEnergy(energyChangeVal * 0.5f, true);
     agent->changeHunger(statChangeVal * 5, true);
     agent->busy = true;
     agent->changeThirst(statChangeVal * 10, true);
@@ -61,11 +61,11 @@ void Eat::Exit(Agent* agent)
 void Gather::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal, true);
+    agent->changeEnergy(energyChangeVal * 0.5f, true);
     agent->changeHunger(-statChangeVal, true);
     agent->changeThirst(-statChangeVal * 2, true);
     agent->changeMoney(statChangeVal, true);
-    agent->changeHappiness(-statChangeVal * 0.8f, true);
+    agent->changeHappiness(-statChangeVal * 0.1f, true);
 }
 void Gather::Enter(Agent* agent)
 {
@@ -81,10 +81,10 @@ void Gather::Exit(Agent* agent)
 void Idle::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal, true);
+    agent->changeEnergy(energyChangeVal * 0.5f, true);
     agent->changeHunger(-statChangeVal, true);
     agent->changeThirst(-statChangeVal * 1.5f, true);
-    agent->changeHappiness(-statChangeVal * 0.5f, true);
+    agent->changeHappiness(-statChangeVal * 0.2f, true);
 }
 void Idle::Enter(Agent* agent)
 {
@@ -100,11 +100,11 @@ void Idle::Exit(Agent* agent)
 void Mining::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(energyChangeVal, true);
+    agent->changeEnergy(energyChangeVal * 0.5f, true);
     agent->changeHunger(-statChangeVal * 0.5f, true);
     agent->changeThirst(-statChangeVal, true);
     agent->changeMoney(statChangeVal * 4, true);
-    agent->changeHappiness(-statChangeVal, true);
+    agent->changeHappiness(-statChangeVal * 0.3f, true);
 }
 void Mining::Enter(Agent* agent)
 {
@@ -138,7 +138,7 @@ void Social::Execute(Agent* agent)
     agent->changeHappiness(statChangeVal * 4, true);
     //Busy prevents function calls to change states
     agent->busy = true;
-    agent->changeEnergy(energyChangeVal, true);
+    agent->changeEnergy(energyChangeVal * 0.5f, true);
     agent->changeHunger(statChangeVal * 4, true);
     agent->changeThirst(statChangeVal * 8, true);
     agent->busy = false;

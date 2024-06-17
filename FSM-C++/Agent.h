@@ -25,13 +25,37 @@ struct Agent
         Stats();
     };
 
+    enum struct Status : char
+    {
+        Sleepy,
+        Hungry,
+        Thirsty,
+        Bored, 
+        Fine, 
+        Motivated,
+        Poor,
+        Dead
+    };
+    enum struct Type : char
+    {
+        Sleeping,
+        Eating,
+        Drinking,
+        Socializing,
+        Lazing,
+        Gathering,
+        Mining,
+        Dead
+
+    };
+
     Stats stats;
     int speed; //affects the rate at which the stats are affected
 
-    std::string type; //current type, referring to state
-    std::string status; //current status, referring to mood of the agent, dictates which state they enter
+    Status status; //current type, referring to state
+    Type type; //current status, referring to mood of the agent, dictates which state they enter
     std::string prevType; //previous type before entering current
-    std::string prevStatus; //previous status
+    //std::string prevStatus; //previous status
     std::string name; //name of agent
     bool busy; //busy is used to prevent function calls
     bool canSocial; //canSocial is used to enter and balance the social state
@@ -54,16 +78,18 @@ struct Agent
     void changeMoney(float change, bool affectedByTime);
     void changeHappiness(float change, bool affectedByTime);
     void checkShouldEnter();
+    bool checkCanEnter();
     void enterState();
 
     void startToSocial();
-    State* getState(std::string message);
+    State* getState(Status &msg);
 
 
 
     bool amIFine();
+    bool inDanger();
     bool canISocial();
-    std::string isAnythingLow();
+    bool isAnythingLow(Status &msg);
 
     bool compareStatusType();
 

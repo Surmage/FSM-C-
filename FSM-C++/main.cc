@@ -50,7 +50,7 @@ int main() {
 	text.setString("Hello");
 	text.setFont(font);
 	text.setCharacterSize(24);
-	text.setFillColor(sf::Color::Black);
+	text.setFillColor(sf::Color::Green);
 	text.setPosition(50,10);
 
 	sf::Text timeText;
@@ -139,7 +139,8 @@ int main() {
 			"Energy: " + std::to_string(a.stats.energy) + "\n" +
 			"Money: " + std::to_string(a.stats.money) + "\n" +
 			"Fullness: " + std::to_string(a.stats.fullness) + "\n" +
-			"Thirst: " + std::to_string(a.stats.thirst));
+			"Thirst: " + std::to_string(a.stats.thirst) + "\n" + 
+			"Happiness: " + std::to_string(a.stats.happiness));
 
 		timeText.setString("Day: " + std::to_string(sm.getDay()) + 
 			" Hour: " + std::to_string(sm.getHour()) +
