@@ -2,7 +2,7 @@
 #include "Agent.h"
 
 Telegram::Telegram() :
-    a(a), b(b), c(c), d(d), chat("\n")
+    a(a), b(b), c(c), d(d), chat("Chat:\n")
 {}
 Telegram::Telegram(Agent& aa, Agent& bb, Agent& cc, Agent& dd) :
 	a(aa), b(bb), c(cc), d(dd), chat("Chat:\n")
@@ -31,7 +31,7 @@ bool Telegram::askForMoney(Agent* caller)
     {
         if (caller->name != getAgent(i)->name) //To avoid asking themselves for money
         {
-            if (getAgent(i)->stats.money >= 100 && getAgent(i)->status != "Sleep" && getAgent(i)->status != "Dead")
+            if (getAgent(i)->stats.money >= 100 && getAgent(i)->type != Type::Sleeping && getAgent(i)->type != Type::Dead)
             {
                 //"busy" being true prevents the state from being changed
                 getAgent(i)->busy = true;
@@ -52,7 +52,7 @@ std::string Telegram::dispatchMessage(Agent* receiver)
 {
     std::string msg;
     //If friend can social
-    if (receiver->stats.money >= 100 && receiver->canISocial() && receiver->busy == false && receiver->status != "Dead")
+    if (receiver->stats.money >= 100 && receiver->canISocial() && receiver->busy == false && receiver->type != Type::Dead)
     {
         msg = "Yes";      
     }
@@ -64,39 +64,35 @@ std::string Telegram::dispatchMessage(Agent* receiver)
     //If friend can't for another reason
     else
     {
-        msg = "Can't because I am" + receiver->type;
+        msg = "Can't because I am" + static_cast<char>(receiver->type);
 
     }
     return msg;
 }
-char* Telegram::getMessageChat() {
+std::string Telegram::getMessageChat() {
     return chat;
 }
 void Telegram::updateMessageText(std::string msg)
 {
     //Combine message with previous chat messages
-    sprintf(chat, "%s\n%s", chat, msg.c_str()); 
+    chat += "\n" + msg;
     int count = 0; //Count for new lines
 
-    char* str = chat;
-    int size = strlen(str);
-    char buf[200]; //Buffer used to 
-    int j = 0;
-    for (int i = 0;  i < size; i++) {
-        str++;
-        if (*str == '\n') { //Add to count for each new line
+    std::string buf; //Buffer used to 
+    for (int i = 0;  i < chat.length(); i++) {
+        if (chat[i] == '\n') { //Add to count for each new line
             count++;
         }
         if (count >= 3) {
             //Write rest of char array into buf
-            buf[j] = *str;
-            j++;
+            buf += chat[i];
         }
     }
     // Greater than 7 (8) is used below because the chat is intended to have 6 saved messages at a time
     // And there are 2 new lines after the initial "Chat:" (2 + 6 = 8) 
     if (count > 7) { 
         //Chat array is set to buf
-        sprintf(chat, "Chat:\n %s", buf);
+        chat = buf;
+        //sprintf(chat, "Chat:\n %s", buf);
     }
 }

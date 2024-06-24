@@ -4,9 +4,22 @@
 
 struct Agent;
 
+enum struct Type : char
+{
+    Sleeping = 'Z',
+    Eating = 'E',
+    Drinking = 'D',
+    Socializing = 'S',
+    Lazing = 'L',
+    Gathering = 'G',
+    Mining = 'M',
+    Dead = 'D'
+
+};
+
 struct State
 {
-    std::string type;
+    Type type;
     float energyChangeVal;
     float statChangeVal;
 
@@ -15,8 +28,6 @@ struct State
     virtual void Enter(Agent* agent) = 0;
     virtual void Execute(Agent* agent) = 0;
     virtual void Exit(Agent* agent) = 0;
-
-    void setStartValues(std::string type);
 };
 
 struct Dead : State

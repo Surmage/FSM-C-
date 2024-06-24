@@ -10,7 +10,7 @@ struct Telegram
     Agent& c;
     Agent& d;
 
-    char chat[256];
+    std::string chat;
 
     Telegram();
     Telegram(Agent &aa, Agent &bb, Agent &cc, Agent &dd);
@@ -20,6 +20,6 @@ struct Telegram
    
     bool askForMoney(Agent* caller);
     std::string dispatchMessage(Agent* receiver);
-    char* getMessageChat();
+    std::string getMessageChat();
     void updateMessageText(std::string msg);
 };

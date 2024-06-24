@@ -1,7 +1,5 @@
 #include <iostream>
 #include "Agent.h"
-#include "imgui.h"
-#include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
 
 int main() {
@@ -20,7 +18,7 @@ int main() {
 
 	
 	Telegram t(a, b, c, d);
-	TimeManager h;
+	StepManager sm;
 
 	//Give agents a phone
 	a.setPhone(&t);
@@ -29,12 +27,12 @@ int main() {
 	d.setPhone(&t);
 
 	//Give agents a clock
-	a.setClock(&h);
-	b.setClock(&h);
-	c.setClock(&h);
-	d.setClock(&h);
+	a.setClock(&sm);
+	b.setClock(&sm);
+	c.setClock(&sm);
+	d.setClock(&sm);
 
-	sf::RenderWindow window(sf::VideoMode(640, 480), "FSM");
+	sf::RenderWindow window(sf::VideoMode(1280, 720), "FSM");
 	window.setFramerateLimit(60);
 	ImGui::SFML::Init(window);
 	sf::CircleShape shape(100.f);
@@ -60,6 +58,13 @@ int main() {
 	timeText.setFillColor(sf::Color::White);
 	timeText.setPosition(300, 10);
 
+	sf::Text chat;
+	chat.setString("");
+	chat.setFont(font);
+	chat.setCharacterSize(24);
+	chat.setFillColor(sf::Color::Green);
+	chat.setPosition(400, 400);
+
 
 
 	sf::Clock deltaClock;
@@ -75,7 +80,6 @@ int main() {
 	
 	srand((unsigned)time(NULL));
 
-	StepManager sm;
 	sm.step = 8;
 	int step = 0;
 	
@@ -135,21 +139,28 @@ int main() {
 
 		//std::cout << isPaused << std::endl;
 		
-		text.setString(a.type + "\n" + 
+		text.setString((std::string(1, (static_cast<char>(a.type)))) + "\n" +
 			"Energy: " + std::to_string(a.stats.energy) + "\n" +
 			"Money: " + std::to_string(a.stats.money) + "\n" +
 			"Fullness: " + std::to_string(a.stats.fullness) + "\n" +
 			"Thirst: " + std::to_string(a.stats.thirst) + "\n" + 
-			"Happiness: " + std::to_string(a.stats.happiness));
+			"Happiness: " + std::to_string(a.stats.happiness) + "\n" + 
+			"Counter: " + std::to_string(a.counter));
 
 		timeText.setString("Day: " + std::to_string(sm.getDay()) + 
 			" Hour: " + std::to_string(sm.getHour()) +
 			" Minute: " + std::to_string(sm.getMinute()));
 
+		chat.setString(t.getMessageChat());
+
+		//std::get<1>(a.location);
+		std::cout << std::get<1>(a.location).x << std::get<1>(a.location).y << std::endl;
+
 		window.clear();
 		window.draw(shape);
 		window.draw(text);
 		window.draw(timeText);
+		window.draw(chat);
 		ImGui::SFML::Render(window);
 		sf::sleep(sf::milliseconds(500 / speed));
 		window.display();

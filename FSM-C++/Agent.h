@@ -7,6 +7,8 @@
 #include "TimeManager.h"
 #include "States.h"
 #include <sstream>
+#include "imgui.h"
+#include "imgui-SFML.h"
 
 
 struct Agent
@@ -25,36 +27,36 @@ struct Agent
         Stats();
     };
 
+    enum struct Location : int
+    {
+        Mines = 0,
+        Home = 1,
+        Work = 2,
+        Supermarket = 3,
+        Bar = 4,
+        Field = 5
+    };
+
     enum struct Status : char
     {
-        Sleepy,
-        Hungry,
-        Thirsty,
-        Bored, 
-        Fine, 
-        Motivated,
-        Poor,
-        Dead
+        Sleepy = 'S',
+        Hungry = 'H',
+        Thirsty = 'T',
+        Bored = 'B',
+        Fine = 'F',
+        Motivated = 'M',
+        Poor = 'P',
+        Dead = 'D'
     };
-    enum struct Type : char
-    {
-        Sleeping,
-        Eating,
-        Drinking,
-        Socializing,
-        Lazing,
-        Gathering,
-        Mining,
-        Dead
-
-    };
+    
 
     Stats stats;
+    std::tuple<Location, sf::Vector2i> location;
     int speed; //affects the rate at which the stats are affected
-
+    int counter;
     Status status; //current type, referring to state
     Type type; //current status, referring to mood of the agent, dictates which state they enter
-    std::string prevType; //previous type before entering current
+    Type prevType; //previous type before entering current
     //std::string prevStatus; //previous status
     std::string name; //name of agent
     bool busy; //busy is used to prevent function calls
@@ -62,7 +64,7 @@ struct Agent
     State* s;
     bool needRepair; //repairing can become necessary from exiting the mining state, (repairing the pickaxe equipment)
     Telegram* phone; //phone to contact other agents
-    TimeManager* clock; //clock to check time and day
+    StepManager* clock; //clock to check time and day
     int timesAskedForHelp; //agent can receive money from other agents in emergencies
     int hour; //time 
     std::tuple<int, Agent*>date; //stores an hour and agent that this agent will socialize with
@@ -78,7 +80,7 @@ struct Agent
     void changeMoney(float change, bool affectedByTime);
     void changeHappiness(float change, bool affectedByTime);
     void checkShouldEnter();
-    bool checkCanEnter();
+    bool checkCanEnter(Status &status);
     void enterState();
 
     void startToSocial();
@@ -96,7 +98,8 @@ struct Agent
     void setCanSocial(bool value);
     void setBusy(bool value);
     void setPhone(Telegram* t);
-    void setClock(TimeManager* h);
+    void setClock(StepManager* h);
+    void setLocation(Location& loc);
     int* getMainStatValues();
     char* getState();
     char* getMoneyChar();
