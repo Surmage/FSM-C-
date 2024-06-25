@@ -27,15 +27,7 @@ struct Agent
         Stats();
     };
 
-    enum struct Location : int
-    {
-        Mines = 0,
-        Home = 1,
-        Work = 2,
-        Supermarket = 3,
-        Bar = 4,
-        Field = 5
-    };
+    
 
     enum struct Status : char
     {
@@ -99,7 +91,7 @@ struct Agent
     void setBusy(bool value);
     void setPhone(Telegram* t);
     void setClock(StepManager* h);
-    void setLocation(Location& loc);
+    void setLocation(Location l);
     int* getMainStatValues();
     char* getState();
     char* getMoneyChar();

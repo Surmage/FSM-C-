@@ -44,6 +44,7 @@ void Eat::Execute(Agent* agent)
 void Eat::Enter(Agent* agent)
 {
     this->type = Type::Eating;
+    agent->setLocation(Location::Restaurant);
     //Busy prevents function calls to change states
     agent->busy = true;
     //Pay for food
@@ -70,6 +71,7 @@ void Gather::Execute(Agent* agent)
 void Gather::Enter(Agent* agent)
 {
     this->type = Type::Gathering;
+    agent->setLocation(Location::Field);
     agent->counter = 0;
 
 }
@@ -91,6 +93,7 @@ void Idle::Execute(Agent* agent)
 void Idle::Enter(Agent* agent)
 {
     this->type = Type::Lazing;
+    agent->setLocation(Location::Home);
     agent->counter = 0;
 
 }
@@ -113,6 +116,7 @@ void Mining::Execute(Agent* agent)
 void Mining::Enter(Agent* agent)
 {
     this->type = Type::Mining;
+    agent->setLocation(Location::Mines);
     if (agent->needRepair)
     {
         //Busy prevents function calls to change states
@@ -154,6 +158,7 @@ void Social::Execute(Agent* agent)
 void Social::Enter(Agent* agent)
 {
     this->type = Type::Socializing;
+    agent->setLocation(Location::Bar);
     //Busy prevents function calls to change states
     agent->busy = true;
     agent->changeMoney(-50, false);
@@ -183,6 +188,7 @@ void Sleep::Enter(Agent* agent)
 {
     
     this->type = Type::Sleeping;
+    agent->setLocation(Location::Home);
     agent->counter = 0;
 
 }

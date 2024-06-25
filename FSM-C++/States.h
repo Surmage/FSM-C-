@@ -17,6 +17,16 @@ enum struct Type : char
 
 };
 
+enum struct Location : int
+{
+    Mines = 0,
+    Home = 1,
+    Work = 2,
+    Restaurant = 3,
+    Bar = 4,
+    Field = 5
+};
+
 struct State
 {
     Type type;

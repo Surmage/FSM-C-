@@ -20,7 +20,7 @@ Agent::Agent() {
     stats.money = 100;
     speed = 1;
     status = Status::Sleepy;
-    location = setLocation(Location::Home);
+    setLocation(Location::Home);
     phone = nullptr;
     clock = nullptr;
     s = NULL;
@@ -52,7 +52,7 @@ Agent::Agent(std::string name) {
     stats.money = startValue3;
     stats.happiness = startValue3;
     status = Status::Sleepy; //start program asleep
-    //location = Location::Home;
+    setLocation(Location::Home);
     phone = nullptr;
     clock = nullptr;
     s = NULL;
@@ -694,9 +694,10 @@ void Agent::Update(int cHour)
     void Agent::setClock(StepManager* h) {
         clock = h;
     }
-    void Agent::setLocation(Location& loc) {
-        sf::Vector2i i(static_cast<int>(loc), static_cast<int>(loc));
-        this->location = std::tuple(loc, i);
+    void Agent::setLocation(Location l) {
+        int coord = static_cast<int>(l);
+        sf::Vector2i pos(coord, coord);
+        this->location = std::tuple(l, pos);
     }
     int* Agent::getMainStatValues() {
         int arr[4] = { (int)stats.fullness, (int)stats.thirst, (int)stats.energy, (int)stats.happiness};
