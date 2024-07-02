@@ -1,4 +1,5 @@
 #pragma once
+#include "Locations.h"
 #include <string>
 #include <ctime>
 
@@ -13,18 +14,8 @@ enum struct Type : char
     Lazing = 'L',
     Gathering = 'G',
     Mining = 'M',
-    Dead = 'D'
+    Dead = 'R'
 
-};
-
-enum struct Location : int
-{
-    Mines = 0,
-    Home = 1,
-    Work = 2,
-    Restaurant = 3,
-    Bar = 4,
-    Field = 5
 };
 
 struct State

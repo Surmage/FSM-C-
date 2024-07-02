@@ -36,9 +36,9 @@ bool Telegram::askForMoney(Agent* caller)
                 //"busy" being true prevents the state from being changed
                 getAgent(i)->busy = true;
                 caller->busy = true;
-                getAgent(i)->changeMoney(-50, false); //friend hands over money
-                caller->changeMoney(50, false); //caller receives friends money
-                caller->changeHappiness(50, false); //caller is happy to have been helped
+                getAgent(i)->changeMoney(-50); //friend hands over money
+                caller->changeMoney(50); //caller receives friends money
+                caller->changeHappiness(50); //caller is happy to have been helped
                 getAgent(i)->busy = false;
                 caller->busy = false;
                 updateMessageText(caller->name + " received money from " + getAgent(i)->name);

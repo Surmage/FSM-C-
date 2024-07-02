@@ -2,19 +2,22 @@
 #include "Agent.h"
 #include <SFML/Graphics.hpp>
 
+const int videoX = 1280;
+const int videoY = 720;
+
 int main() {
 	//create actor 1
 	char txtAgent1[] = "Agent1";
-	Agent a(txtAgent1);
+	Agent a(txtAgent1, 0);
 	//create actor 2
 	char txtAgent2[] = "Agent2";
-	Agent b(txtAgent2);
+	Agent b(txtAgent2, 1);
 	//create actor 3
 	char txtAgent3[] = "Agent3";
-	Agent c(txtAgent3);
+	Agent c(txtAgent3, 2);
 	//create actor 4
 	char txtAgent4[] = "Agent4";
-	Agent d(txtAgent4);
+	Agent d(txtAgent4, 3);
 
 	
 	Telegram t(a, b, c, d);
@@ -32,12 +35,30 @@ int main() {
 	c.setClock(&sm);
 	d.setClock(&sm);
 
-	sf::RenderWindow window(sf::VideoMode(1280, 720), "FSM");
+	sf::RenderWindow window(sf::VideoMode(videoX, videoY), "FSM");
 	window.setFramerateLimit(60);
 	ImGui::SFML::Init(window);
-	sf::CircleShape shape(100.f);
-	//sf::RectangleShape rect(100.f, 100.f);
-	shape.setFillColor(sf::Color::White);
+
+	std::vector<sf::RectangleShape>agentShapes;
+	for (int i = 0; i < 4; i++) {
+		sf::RectangleShape shape(sf::Vector2f(50.f, 50.f));
+		shape.setFillColor(sf::Color::Red);
+		shape.setPosition(sf::Vector2f(100, 100));
+		agentShapes.push_back(shape);
+	}
+	
+	std::vector<sf::CircleShape>shapes;
+	std::vector<sf::Vector2f>locations;
+	for (int i = 0; i < 6; i++) {
+		sf::Vector2f loc = LocationC::getCoords(i, 0);
+		locations.push_back(loc);
+
+		sf::CircleShape shape(100.f);
+		shape.setFillColor(sf::Color::White);
+		shape.setPosition(loc);
+		shapes.push_back(shape);
+	}
+
 	//rect.setFillColor(sf::Color::Green);
 	sf::Font font;
 	if (!font.loadFromFile("tahoma.ttf"))
@@ -83,28 +104,21 @@ int main() {
 	sm.step = 8;
 	int step = 0;
 	
-	
 
 	while (window.isOpen()) {
+		std::vector<Agent>agents;
 		elapsed = deltaClock.getElapsedTime() - start;
 		if (!isPaused) {
 			//Update agents
 			a.Update(sm.getHour());
 			b.Update(sm.getHour());
 			c.Update(sm.getHour());
-			d.Update(sm.getHour());
-			//std::cout << a.status << " " << a.energy << " Hour: " << a.hour << std::endl;
-			
-			//Roughly 1 hour per 2 seconds from testing
-			//float currentTime = (float)elapsed.asMicroseconds() / 600.0f; 
-			//float deltaTime = currentTime - prevFrame;
-			//prevFrame = currentTime;
-			//std::cout << currentTime << std::endl;
-			//h.updateTime(deltaTime  * speed);			
+			d.Update(sm.getHour());	
 			sm.step = step;
 			step++;
 			
 		}
+		agents.push_back(a); agents.push_back(b); agents.push_back(c); agents.push_back(d);
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			ImGui::SFML::ProcessEvent(window, event);
@@ -118,9 +132,7 @@ int main() {
 		
 		//ImGui::ShowDemoWindow();
 		ImGui::Begin("Hello, world!");
-		if(ImGui::Button("Pause")) {
-			isPaused = !isPaused;
-		}
+		ImGui::Checkbox("Pause", &isPaused);
 		ImGui::SliderInt("speed", &speed, 0, 10);
 		if (isPaused) {
 			if (ImGui::InputInt("Step", &step, 1, 1)) {
@@ -132,8 +144,17 @@ int main() {
 				prevStep = step--;
 				sm.step = step;
 			}
-
+			ImGui::BeginChild("Agent A", ImVec2(0, 0), true,
+				ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+			ImGui::SliderFloat("Energy", &a.stats.energy, 0, 100);
+			ImGui::SliderFloat("Fullness", &a.stats.fullness, 0, 100);
+			ImGui::SliderFloat("Happiness", &a.stats.happiness, 0, 100);
+			ImGui::SliderFloat("Thirst", &a.stats.thirst, 0, 100);
+			ImGui::SliderFloat("Money", &a.stats.money, 0, 100);
+			ImGui::EndChild();
 		}
+
+		
 			
 		ImGui::End();
 
@@ -152,19 +173,21 @@ int main() {
 			" Minute: " + std::to_string(sm.getMinute()));
 
 		chat.setString(t.getMessageChat());
-
-		//std::get<1>(a.location);
-		std::cout << std::get<1>(a.location).x << std::get<1>(a.location).y << std::endl;
-
+		
 		window.clear();
-		window.draw(shape);
+		for (int i = 0; i < shapes.size(); i++) {
+			window.draw(shapes[i]);
+		}
+		for (int i = 0; i < agentShapes.size(); i++) {
+			agentShapes[i].setPosition(sf::Vector2f(agents[i].position.x, agents[i].position.y));
+			window.draw(agentShapes[i]);
+		}
 		window.draw(text);
 		window.draw(timeText);
 		window.draw(chat);
 		ImGui::SFML::Render(window);
 		sf::sleep(sf::milliseconds(500 / speed));
-		window.display();
-		
+		window.display();		
 	}
 
 	ImGui::SFML::Shutdown();

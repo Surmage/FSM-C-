@@ -7,8 +7,6 @@
 #include "TimeManager.h"
 #include "States.h"
 #include <sstream>
-#include "imgui.h"
-#include "imgui-SFML.h"
 
 
 struct Agent
@@ -43,13 +41,14 @@ struct Agent
     
 
     Stats stats;
-    std::tuple<Location, sf::Vector2i> location;
-    int speed; //affects the rate at which the stats are affected
+    Location location;
     int counter;
+    sf::Vector2f position;
     Status status; //current type, referring to state
     Type type; //current status, referring to mood of the agent, dictates which state they enter
     Type prevType; //previous type before entering current
     //std::string prevStatus; //previous status
+    int id;
     std::string name; //name of agent
     bool busy; //busy is used to prevent function calls
     bool canSocial; //canSocial is used to enter and balance the social state
@@ -62,15 +61,15 @@ struct Agent
     std::tuple<int, Agent*>date; //stores an hour and agent that this agent will socialize with
 
     Agent();
-    Agent(std::string name);
+    Agent(std::string name, int id);
 
     // Update is called in main loop
     void Update(int speed);
-    void changeHunger(float change, bool affectedByTime);
-    void changeThirst(float change, bool affectedByTime);
-    void changeEnergy(float change, bool affectedByTime);
-    void changeMoney(float change, bool affectedByTime);
-    void changeHappiness(float change, bool affectedByTime);
+    void changeHunger(float change);
+    void changeThirst(float change);
+    void changeEnergy(float change);
+    void changeMoney(float change);
+    void changeHappiness(float change);
     void checkShouldEnter();
     bool checkCanEnter(Status &status);
     void enterState();
@@ -91,7 +90,7 @@ struct Agent
     void setBusy(bool value);
     void setPhone(Telegram* t);
     void setClock(StepManager* h);
-    void setLocation(Location l);
+    
     int* getMainStatValues();
     char* getState();
     char* getMoneyChar();
