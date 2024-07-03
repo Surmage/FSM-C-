@@ -35,6 +35,8 @@ Agent::Agent() {
     busy = false;
     needRepair = false;
     counter = 0;
+    workCounter = 0;
+    goBackToWork = false;
 }
 
 Agent::Agent(std::string name, int id) {
@@ -66,6 +68,8 @@ Agent::Agent(std::string name, int id) {
     date = std::make_tuple(NULL, this);
     hour = 0;
     counter = 0;
+    workCounter = 0;
+    goBackToWork = false;
 }
 
 void Agent::Update(int cHour)
@@ -99,9 +103,10 @@ void Agent::Update(int cHour)
     }
 
     this->hour = cHour;
-    if (hour == 22 && canSocial) //if it's too late at night
+    if (hour == 22) //if it's too late at night
     {
         canSocial = false;
+        goBackToWork = false;
     }
     if (hour == 8 && !canSocial) //if agent has woken up
     {
@@ -145,6 +150,11 @@ void Agent::Update(int cHour)
 
     type = s->type;
     s->Execute(this); //call stat changing function
+    if (goBackToWork && checkCanEnter(status))
+    {
+        status = Status::Poor;
+        enterState();
+    }
 
     //start socializing if the time for the date has arrived
     if (std::get<0>(date) == hour && std::get<1>(date)->name != this->name && canSocial && type != Type::Socializing) {
@@ -234,14 +244,14 @@ void Agent::Update(int cHour)
         }
         else if (type == Type::Gathering)
         {
-            if (counter >= 6 || stats.thirst <= 10 || stats.fullness <= 10)
+            if (counter >= 6 || stats.thirst <= 10 || stats.fullness <= 10 || stats.energy <= 5)
             {
                 return true;
             }
         }
         else if (type == Type::Mining)
         {
-            if (counter >= 12 || stats.thirst <= 10 || stats.fullness <= 10)
+            if (counter >= 36 || stats.thirst <= 10 || stats.fullness <= 10 || stats.energy <= 5)
             {
                 return true;
             }
@@ -483,7 +493,7 @@ void Agent::Update(int cHour)
         {
             arrs.pop_back();
         }
-        if ((needRepair && stats.money < 100) || hour >= 19) //remove mining as an option
+        if ((needRepair && stats.money < 100) || hour >= 15) //remove mining as an option
         {
             arrs.erase(arrs.begin() + 3);
         }

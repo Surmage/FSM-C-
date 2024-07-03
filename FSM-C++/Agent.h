@@ -43,6 +43,7 @@ struct Agent
     Stats stats;
     Location location;
     int counter;
+    int workCounter;
     sf::Vector2f position;
     Status status; //current type, referring to state
     Type type; //current status, referring to mood of the agent, dictates which state they enter
@@ -59,6 +60,7 @@ struct Agent
     int timesAskedForHelp; //agent can receive money from other agents in emergencies
     int hour; //time 
     std::tuple<int, Agent*>date; //stores an hour and agent that this agent will socialize with
+    bool goBackToWork;
 
     Agent();
     Agent(std::string name, int id);

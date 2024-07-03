@@ -6,6 +6,7 @@ const int videoX = 1280;
 const int videoY = 720;
 
 int main() {
+	std::vector<Agent>agents;
 	//create actor 1
 	char txtAgent1[] = "Agent1";
 	Agent a(txtAgent1, 0);
@@ -19,7 +20,7 @@ int main() {
 	char txtAgent4[] = "Agent4";
 	Agent d(txtAgent4, 3);
 
-	
+
 	Telegram t(a, b, c, d);
 	StepManager sm;
 
@@ -34,6 +35,11 @@ int main() {
 	b.setClock(&sm);
 	c.setClock(&sm);
 	d.setClock(&sm);
+
+	agents.push_back(a); agents.push_back(b); agents.push_back(c); agents.push_back(d);
+
+	
+	
 
 	sf::RenderWindow window(sf::VideoMode(videoX, videoY), "FSM");
 	window.setFramerateLimit(60);
@@ -65,12 +71,14 @@ int main() {
 	{
 		// error...
 	}
+	std::vector<sf::Text>texts;
 	sf::Text text;
 	text.setString("Hello");
 	text.setFont(font);
 	text.setCharacterSize(24);
 	text.setFillColor(sf::Color::Green);
 	text.setPosition(50,10);
+	texts.push_back(text);
 
 	sf::Text timeText;
 	timeText.setString("Hello");
@@ -78,6 +86,7 @@ int main() {
 	timeText.setCharacterSize(24);
 	timeText.setFillColor(sf::Color::White);
 	timeText.setPosition(300, 10);
+	texts.push_back(timeText);
 
 	sf::Text chat;
 	chat.setString("");
@@ -85,6 +94,7 @@ int main() {
 	chat.setCharacterSize(24);
 	chat.setFillColor(sf::Color::Green);
 	chat.setPosition(400, 400);
+	texts.push_back(chat);
 
 
 
@@ -103,31 +113,53 @@ int main() {
 
 	sm.step = 8;
 	int step = 0;
+	sf::Vector2f oldPos;
+	int selectedAgent = 0;
 	
-
 	while (window.isOpen()) {
-		std::vector<Agent>agents;
+		
 		elapsed = deltaClock.getElapsedTime() - start;
 		if (!isPaused) {
 			//Update agents
-			a.Update(sm.getHour());
-			b.Update(sm.getHour());
-			c.Update(sm.getHour());
-			d.Update(sm.getHour());	
+			agents[0].Update(sm.getHour());
+			agents[1].Update(sm.getHour());
+			agents[2].Update(sm.getHour());
+			agents[3].Update(sm.getHour());
+			sf::sleep(sf::milliseconds(500 / speed));
 			sm.step = step;
 			step++;
 			
 		}
-		agents.push_back(a); agents.push_back(b); agents.push_back(c); agents.push_back(d);
+		
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			ImGui::SFML::ProcessEvent(window, event);
 
-			if (event.type == sf::Event::Closed) {
-				window.close();
+			switch (event.type)
+			{
+				case sf::Event::Closed :
+					window.close();
+					break;
+				case sf::Event::KeyPressed:
+					if (event.key.code == sf::Keyboard::Space)
+					{
+						isPaused = !isPaused;
+					}
+
+					break;
+				case sf::Event::MouseButtonPressed:
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						oldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+						for (int i = 0; i < agentShapes.size(); i++) {
+							if (agentShapes[i].getGlobalBounds().contains(oldPos)) {
+								selectedAgent = i;
+								break;
+							}
+						}
+					}
+					break;		
 			}
 		}
-
 		ImGui::SFML::Update(window, deltaClock.getElapsedTime());
 		
 		//ImGui::ShowDemoWindow();
@@ -137,42 +169,40 @@ int main() {
 		if (isPaused) {
 			if (ImGui::InputInt("Step", &step, 1, 1)) {
 				std::cout << "Pressed" << std::endl;
-				a.Update(sm.getHour());
-				b.Update(sm.getHour());
-				c.Update(sm.getHour());
-				d.Update(sm.getHour());
+				agents[0].Update(sm.getHour());
+				agents[1].Update(sm.getHour());
+				agents[2].Update(sm.getHour());
+				agents[3].Update(sm.getHour());
 				prevStep = step--;
 				sm.step = step;
 			}
 			ImGui::BeginChild("Agent A", ImVec2(0, 0), true,
 				ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
-			ImGui::SliderFloat("Energy", &a.stats.energy, 0, 100);
-			ImGui::SliderFloat("Fullness", &a.stats.fullness, 0, 100);
-			ImGui::SliderFloat("Happiness", &a.stats.happiness, 0, 100);
-			ImGui::SliderFloat("Thirst", &a.stats.thirst, 0, 100);
-			ImGui::SliderFloat("Money", &a.stats.money, 0, 100);
+			ImGui::SliderFloat("Energy", &agents[selectedAgent].stats.energy, 0, 100);
+			ImGui::SliderFloat("Fullness", &agents[selectedAgent].stats.fullness, 0, 100);
+			ImGui::SliderFloat("Happiness", &agents[selectedAgent].stats.happiness, 0, 100);
+			ImGui::SliderFloat("Thirst", &agents[selectedAgent].stats.thirst, 0, 100);
+			ImGui::SliderFloat("Money", &agents[selectedAgent].stats.money, 0, 100);
 			ImGui::EndChild();
 		}
-
 		
-			
 		ImGui::End();
 
 		//std::cout << isPaused << std::endl;
 		
-		text.setString((std::string(1, (static_cast<char>(a.type)))) + "\n" +
-			"Energy: " + std::to_string(a.stats.energy) + "\n" +
-			"Money: " + std::to_string(a.stats.money) + "\n" +
-			"Fullness: " + std::to_string(a.stats.fullness) + "\n" +
-			"Thirst: " + std::to_string(a.stats.thirst) + "\n" + 
-			"Happiness: " + std::to_string(a.stats.happiness) + "\n" + 
-			"Counter: " + std::to_string(a.counter));
+		texts[0].setString((std::string(1, (static_cast<char>(a.type)))) + "\n" +
+			"Energy: " + std::to_string(agents[selectedAgent].stats.energy) + "\n" +
+			"Money: " + std::to_string(agents[selectedAgent].stats.money) + "\n" +
+			"Fullness: " + std::to_string(agents[selectedAgent].stats.fullness) + "\n" +
+			"Thirst: " + std::to_string(agents[selectedAgent].stats.thirst) + "\n" +
+			"Happiness: " + std::to_string(agents[selectedAgent].stats.happiness) + "\n" +
+			"Counter: " + std::to_string(agents[selectedAgent].counter));
 
-		timeText.setString("Day: " + std::to_string(sm.getDay()) + 
+		texts[1].setString("Day: " + std::to_string(sm.getDay()) + 
 			" Hour: " + std::to_string(sm.getHour()) +
 			" Minute: " + std::to_string(sm.getMinute()));
 
-		chat.setString(t.getMessageChat());
+		texts[2].setString(t.getMessageChat());
 		
 		window.clear();
 		for (int i = 0; i < shapes.size(); i++) {
@@ -182,11 +212,11 @@ int main() {
 			agentShapes[i].setPosition(sf::Vector2f(agents[i].position.x, agents[i].position.y));
 			window.draw(agentShapes[i]);
 		}
-		window.draw(text);
-		window.draw(timeText);
-		window.draw(chat);
+		for (int i = 0; i < texts.size(); i++) {
+			window.draw(texts[i]);
+		}
 		ImGui::SFML::Render(window);
-		sf::sleep(sf::milliseconds(500 / speed));
+		
 		window.display();		
 	}
 

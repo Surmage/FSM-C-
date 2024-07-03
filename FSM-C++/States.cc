@@ -136,20 +136,35 @@ void Mining::Enter(Agent* agent)
         agent->busy = false;
         agent->sendMessage(agent->name + " repaired their pickaxe.");
     }
-    agent->counter = 0;
+    if (agent->goBackToWork) {
+        agent->counter = agent->workCounter;
+        std::cout << agent->name << " came back to work" << std::endl;
+    }
+    else {
+        agent->counter = 0;
+    }
+        
+    agent->goBackToWork = false;
 }
 
 void Mining::Exit(Agent* agent)
 {
     //Chance for pickaxe to need repairing
     int pickaxeBreakChance = rand() % 11; //10% chance
-    if (pickaxeBreakChance == 0)
+    if (pickaxeBreakChance == 0 && !agent->goBackToWork)
     {
         agent->needRepair = true;
         std::cout << agent->name << " pickaxe broke" << std::endl;
         agent->sendMessage(agent->name + "'s pickaxe broke.");
     }
-
+    if (agent->counter < 36) {
+        agent->goBackToWork = true;
+        agent->workCounter = agent->counter;
+        std::cout << agent->name << " left work but will be back." << std::endl;
+    }
+    else
+        agent->workCounter = 0;
+       
 }
 
 void Social::Execute(Agent* agent)
@@ -176,6 +191,7 @@ void Social::Enter(Agent* agent)
     agent->changeMoney(-50);
     agent->changeHappiness(statChangeVal * 3.f);
     agent->busy = false;
+    
     agent->counter = 0;
     std::cout << agent->name << " enterered social" << std::endl;
 }
