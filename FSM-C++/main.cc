@@ -20,25 +20,23 @@ int main() {
 	char txtAgent4[] = "Agent4";
 	Agent d(txtAgent4, 3);
 
+	agents.push_back(a); agents.push_back(b); agents.push_back(c); agents.push_back(d);
 
-	Telegram t(a, b, c, d);
+
+	Telegram t(agents[0], agents[1], agents[2], agents[3]);
 	StepManager sm;
 
 	//Give agents a phone
-	a.setPhone(&t);
-	b.setPhone(&t);
-	c.setPhone(&t);
-	d.setPhone(&t);
+	agents[0].setPhone(&t);
+	agents[1].setPhone(&t);
+	agents[2].setPhone(&t);
+	agents[3].setPhone(&t);
 
 	//Give agents a clock
-	a.setClock(&sm);
-	b.setClock(&sm);
-	c.setClock(&sm);
-	d.setClock(&sm);
-
-	agents.push_back(a); agents.push_back(b); agents.push_back(c); agents.push_back(d);
-
-	
+	agents[0].setClock(&sm);
+	agents[1].setClock(&sm);
+	agents[2].setClock(&sm);
+	agents[3].setClock(&sm);
 	
 
 	sf::RenderWindow window(sf::VideoMode(videoX, videoY), "FSM");
@@ -125,6 +123,7 @@ int main() {
 			agents[1].Update(sm.getHour());
 			agents[2].Update(sm.getHour());
 			agents[3].Update(sm.getHour());
+			//t.printAgentStats();
 			sf::sleep(sf::milliseconds(500 / speed));
 			sm.step = step;
 			step++;
@@ -168,13 +167,14 @@ int main() {
 		ImGui::SliderInt("speed", &speed, 0, 10);
 		if (isPaused) {
 			if (ImGui::InputInt("Step", &step, 1, 1)) {
-				std::cout << "Pressed" << std::endl;
+				
 				agents[0].Update(sm.getHour());
 				agents[1].Update(sm.getHour());
 				agents[2].Update(sm.getHour());
 				agents[3].Update(sm.getHour());
 				prevStep = step--;
 				sm.step = step;
+				std::cout << std::string(1, (static_cast<char>(agents[0].type))) << std::endl;
 			}
 			ImGui::BeginChild("Agent A", ImVec2(0, 0), true,
 				ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
@@ -190,7 +190,7 @@ int main() {
 
 		//std::cout << isPaused << std::endl;
 		
-		texts[0].setString((std::string(1, (static_cast<char>(a.type)))) + "\n" +
+		texts[0].setString((std::string(1, (static_cast<char>(agents[selectedAgent].type)))) + "\n" +
 			"Energy: " + std::to_string(agents[selectedAgent].stats.energy) + "\n" +
 			"Money: " + std::to_string(agents[selectedAgent].stats.money) + "\n" +
 			"Fullness: " + std::to_string(agents[selectedAgent].stats.fullness) + "\n" +

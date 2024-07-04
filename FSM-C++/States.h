@@ -20,7 +20,6 @@ enum struct Type : char
 
 struct State
 {
-    Type type;
     float energyChangeVal;
     float statChangeVal;
 

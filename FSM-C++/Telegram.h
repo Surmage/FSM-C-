@@ -17,7 +17,7 @@ struct Telegram
    
 
     Agent* getAgent(int i);
-   
+    void printAgentStats();
     bool askForMoney(Agent* caller);
     std::string dispatchMessage(Agent* receiver);
     std::string getMessageChat();

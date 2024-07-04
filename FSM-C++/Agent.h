@@ -51,7 +51,6 @@ struct Agent
     //std::string prevStatus; //previous status
     int id;
     std::string name; //name of agent
-    bool busy; //busy is used to prevent function calls
     bool canSocial; //canSocial is used to enter and balance the social state
     State* s;
     bool needRepair; //repairing can become necessary from exiting the mining state, (repairing the pickaxe equipment)
@@ -89,7 +88,6 @@ struct Agent
     bool compareStatusType();
 
     void setCanSocial(bool value);
-    void setBusy(bool value);
     void setPhone(Telegram* t);
     void setClock(StepManager* h);
     

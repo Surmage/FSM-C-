@@ -3,7 +3,6 @@
 
 State::State() 
 {
-    type = Type::Sleeping;
     //3 represents taking 16 hours for stat to fill (Increase by 8000)
     //Multiplying it decreases the time it would take, example: 3 * 2 would take 8 hours, 3 * 8 would take 2 hours
     //Dividing it increases the time it would take, example: 3 / 2 would take 16 hours
@@ -21,7 +20,7 @@ void Drink::Execute(Agent* agent)
 }
 void Drink::Enter(Agent* agent)
 {
-    this->type = Type::Drinking;
+    agent->type = Type::Drinking;
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     agent->counter = 0;
@@ -37,23 +36,19 @@ void Eat::Execute(Agent* agent)
     //Change stat variables
     agent->changeEnergy(-energyChangeVal);
     agent->changeHunger(statChangeVal * 10);
-    agent->busy = true;
     agent->changeThirst(statChangeVal * 10);
     agent->changeHappiness(statChangeVal * 0.2f);
-    agent->busy = false;
     agent->counter++;
 }
 void Eat::Enter(Agent* agent)
 {
-    this->type = Type::Eating;
+    agent->type = Type::Eating;
     agent->location = (Location::Restaurant);
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     //Busy prevents function calls to change states
-    agent->busy = true;
     //Pay for food
     agent->changeMoney(-25);
-    agent->busy = false;
     agent->counter = 0;
 }
 
@@ -74,7 +69,7 @@ void Gather::Execute(Agent* agent)
 }
 void Gather::Enter(Agent* agent)
 {
-    this->type = Type::Gathering;
+    agent->type = Type::Gathering;
     agent->location = (Location::Field);
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
@@ -94,11 +89,12 @@ void Idle::Execute(Agent* agent)
     agent->changeHunger(-statChangeVal * 0.5f);
     agent->changeThirst(-statChangeVal * 1.5f);
     agent->changeHappiness(-statChangeVal * 0.05f);
+    agent->changeMoney(-5);
     agent->counter++;
 }
 void Idle::Enter(Agent* agent)
 {
-    this->type = Type::Lazing;
+    agent->type = Type::Lazing;
     agent->location = (Location::Home);
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
@@ -123,22 +119,20 @@ void Mining::Execute(Agent* agent)
 }
 void Mining::Enter(Agent* agent)
 {
-    this->type = Type::Mining;
+    agent->type = Type::Mining;
     agent->location = (Location::Mines);
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     if (agent->needRepair)
     {
         //Busy prevents function calls to change states
-        agent->busy = true;
         agent->needRepair = false;
         agent->changeMoney(-100);
-        agent->busy = false;
         agent->sendMessage(agent->name + " repaired their pickaxe.");
     }
     if (agent->goBackToWork) {
         agent->counter = agent->workCounter;
-        std::cout << agent->name << " came back to work" << std::endl;
+        //std::cout << agent->name << " came back to work" << std::endl;
     }
     else {
         agent->counter = 0;
@@ -149,6 +143,13 @@ void Mining::Enter(Agent* agent)
 
 void Mining::Exit(Agent* agent)
 {
+    if (agent->counter < 36 && agent->stats.energy > 20) {
+        agent->goBackToWork = true;
+        agent->workCounter = agent->counter;
+        //std::cout << agent->name << " left work but will be back." << std::endl;
+    }
+    else
+        agent->workCounter = 0;
     //Chance for pickaxe to need repairing
     int pickaxeBreakChance = rand() % 11; //10% chance
     if (pickaxeBreakChance == 0 && !agent->goBackToWork)
@@ -157,14 +158,6 @@ void Mining::Exit(Agent* agent)
         std::cout << agent->name << " pickaxe broke" << std::endl;
         agent->sendMessage(agent->name + "'s pickaxe broke.");
     }
-    if (agent->counter < 36) {
-        agent->goBackToWork = true;
-        agent->workCounter = agent->counter;
-        std::cout << agent->name << " left work but will be back." << std::endl;
-    }
-    else
-        agent->workCounter = 0;
-       
 }
 
 void Social::Execute(Agent* agent)
@@ -172,25 +165,21 @@ void Social::Execute(Agent* agent)
     //Change stat variables
     agent->changeHappiness(statChangeVal * 2);
     //Busy prevents function calls to change states
-    agent->busy = true;
     agent->changeMoney(-10);
     agent->changeEnergy(-energyChangeVal);
     agent->changeHunger(statChangeVal * 4);
     agent->changeThirst(statChangeVal * 8);
-    agent->busy = false;
     agent->counter++;
 }
 void Social::Enter(Agent* agent)
 {
-    this->type = Type::Socializing;
+    agent->type = Type::Socializing;
     agent->location = (Location::Bar);
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     //Busy prevents function calls to change states
-    agent->busy = true;
     agent->changeMoney(-50);
     agent->changeHappiness(statChangeVal * 3.f);
-    agent->busy = false;
     
     agent->counter = 0;
     std::cout << agent->name << " enterered social" << std::endl;
@@ -205,22 +194,18 @@ void Sleep::Execute(Agent* agent)
 {
     //Change stat variables
     //Busy prevents function calls to change states
-    agent->busy = true;
     agent->changeHunger(-statChangeVal * 0.01f);
     agent->changeThirst(-statChangeVal * 0.01f);
-    agent->busy = false;
     agent->changeEnergy(energyChangeVal * 2.f);
     agent->counter++;
 }
 void Sleep::Enter(Agent* agent)
-{
-    
-    this->type = Type::Sleeping;
+{   
+    agent->type = Type::Sleeping;
     agent->location = (Location::Home);
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     agent->counter = 0;
-
 }
 
 void Sleep::Exit(Agent* agent)
@@ -235,7 +220,7 @@ void Dead::Execute(Agent* agent)
 void Dead::Enter(Agent* agent)
 {
     
-    this->type = Type::Dead;
+    agent->type = Type::Dead;
     agent->counter = 0;
 }
 

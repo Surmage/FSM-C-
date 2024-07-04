@@ -24,6 +24,10 @@ Agent* Telegram::getAgent(int i) {
 	}
 
 }
+
+void Telegram::printAgentStats() {
+    std::cout << a.stats.energy << std::endl;
+}
 bool Telegram::askForMoney(Agent* caller)
 {
     //Check through all contacts (agents)
@@ -34,13 +38,9 @@ bool Telegram::askForMoney(Agent* caller)
             if (getAgent(i)->stats.money >= 100 && getAgent(i)->type != Type::Sleeping && getAgent(i)->type != Type::Dead)
             {
                 //"busy" being true prevents the state from being changed
-                getAgent(i)->busy = true;
-                caller->busy = true;
                 getAgent(i)->changeMoney(-50); //friend hands over money
                 caller->changeMoney(50); //caller receives friends money
                 caller->changeHappiness(50); //caller is happy to have been helped
-                getAgent(i)->busy = false;
-                caller->busy = false;
                 updateMessageText(caller->name + " received money from " + getAgent(i)->name);
                 return true;
             }
@@ -51,8 +51,10 @@ bool Telegram::askForMoney(Agent* caller)
 std::string Telegram::dispatchMessage(Agent* receiver)
 {
     std::string msg;
+    std::cout << receiver->name << " Money:" << receiver->stats.money 
+        << " Energy: " << receiver->stats.energy << std::endl;
     //If friend can social
-    if (receiver->stats.money >= 100 && receiver->canISocial() && receiver->busy == false && receiver->type != Type::Dead)
+    if (receiver->stats.money >= 100 && receiver->canISocial() && receiver->type != Type::Dead)
     {
         msg = "Yes";      
     }

@@ -26,13 +26,12 @@ Agent::Agent() {
     clock = nullptr;
     s = NULL;
     enterState();
-    type = s->type;
+    type = Type::Sleeping;
     prevType = type;
     date = std::make_tuple(NULL, this);
     timesAskedForHelp = 0;
     hour = 0;
     canSocial = true;
-    busy = false;
     needRepair = false;
     counter = 0;
     workCounter = 0;
@@ -44,7 +43,6 @@ Agent::Agent(std::string name, int id) {
     this->id = id;
     timesAskedForHelp = 0;
     canSocial = true;
-    busy = false;
     needRepair = false;
     //randomize start values
     float startValue1 = 50.f + rand() % 50; //random between 4000 and 8000
@@ -63,7 +61,7 @@ Agent::Agent(std::string name, int id) {
     clock = nullptr;
     s = NULL;
     enterState();
-    type = s->type;
+    type = Type::Sleeping;
     prevType = type;
     date = std::make_tuple(NULL, this);
     hour = 0;
@@ -94,21 +92,19 @@ void Agent::Update(int cHour)
     else if (stats.energy <= 0) //pass out
     {
         //busy prevents certain function calls
-        busy = true;
         changeHunger(-15);
         changeThirst(-15);
         changeMoney(-50);
-        busy = false;
         sendMessage(name + " passed out.");
     }
 
     this->hour = cHour;
     if (hour == 22) //if it's too late at night
     {
-        canSocial = false;
+        //canSocial = false;
         goBackToWork = false;
     }
-    if (hour == 8 && !canSocial) //if agent has woken up
+    if (hour == 6 && !canSocial) //if agent has woken up
     {
         canSocial = true;
     }
@@ -148,12 +144,13 @@ void Agent::Update(int cHour)
         stats.happiness = stats.maxHappiness;
     } 
 
-    type = s->type;
+    //type = s->type;
     s->Execute(this); //call stat changing function
     if (goBackToWork && checkCanEnter(status))
     {
         status = Status::Poor;
         enterState();
+        return;
     }
 
     //start socializing if the time for the date has arrived
@@ -163,9 +160,7 @@ void Agent::Update(int cHour)
     }
     if (amIFine() || inDanger()) {
         checkShouldEnter();
-    }
-            
-        
+    }     
 }
     void Agent::changeHunger(float change)
     {
@@ -230,7 +225,7 @@ void Agent::Update(int cHour)
         }
         else if (type == Type::Sleeping)
         {
-            if (hour = 6) //wake up at 6
+            if (hour == 6) //wake up at 6
             {
                 return true;
             }
@@ -274,7 +269,6 @@ void Agent::Update(int cHour)
         delete s;
         s = getState(status);
         s->Enter(this);
-        type = s->type;
     }
 
     void Agent::startToSocial()
@@ -312,9 +306,9 @@ void Agent::Update(int cHour)
                 }
             }
             //Find new state to enter
-            setCanSocial(!canSocial); //flipping canSocial is required to prevent isAnythingLow() from returning "Bored" again
+            setCanSocial(false); //flipping canSocial is required to prevent isAnythingLow() from returning "Bored" again
             this->isAnythingLow(msg);
-            setCanSocial(!canSocial);
+            setCanSocial(true);
         }
         //Enter eat state
         if (msg == Status::Hungry)
@@ -461,7 +455,7 @@ void Agent::Update(int cHour)
             }
             if (type == Type::Mining)
             {
-                if (stats.money >= 250)
+                if (stats.money >= 250 && counter >= 25)
                 {
                     return true;
                 }
@@ -681,9 +675,6 @@ void Agent::Update(int cHour)
     void Agent::setCanSocial(bool value)
     {
         canSocial = value;
-    }
-    void Agent::setBusy(bool value) {
-        busy = value;
     }
     void Agent::setPhone(Telegram* t) {
         phone = t;
