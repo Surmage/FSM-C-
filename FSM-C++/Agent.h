@@ -42,13 +42,11 @@ struct Agent
 
     Stats stats;
     Location location;
-    int counter;
-    int workCounter;
+    int counter; //keeps track of cycles in a state, gets incremented by 1 per game loop until reset
+    int workCounter; //cycles specially for mining state, to ensure the required work hours are met
     sf::Vector2f position;
-    Status status; //current type, referring to state
-    Type type; //current status, referring to mood of the agent, dictates which state they enter
-    Type prevType; //previous type before entering current
-    //std::string prevStatus; //previous status
+    Status status; 
+    Type type; //current type, referring to state
     int id;
     std::string name; //name of agent
     bool canSocial; //canSocial is used to enter and balance the social state
@@ -59,40 +57,37 @@ struct Agent
     int timesAskedForHelp; //agent can receive money from other agents in emergencies
     int hour; //time 
     std::tuple<int, Agent*>date; //stores an hour and agent that this agent will socialize with
-    bool goBackToWork;
+    bool goBackToWork; //goes back to work after taking a drinking or eating break
 
     Agent();
     Agent(std::string name, int id);
 
-    // Update is called in main loop
-    void Update(int speed);
+    void Update(int speed);  // Update is called in main loop
+
+    //Methods for changing a stat
     void changeHunger(float change);
     void changeThirst(float change);
     void changeEnergy(float change);
     void changeMoney(float change);
     void changeHappiness(float change);
+
+    //Methods for handling agent switching states
     void checkShouldEnter();
-    bool checkCanEnter(Status &status);
-    void enterState();
+    bool checkCanEnter(); //Checks if leaving their current state is appropriate
+    void enterState(); //Handle state exit and enter
+    void startToSocial(); //Skip previous stages and enter social state
 
-    void startToSocial();
-    State* getState(Status &msg);
+    State* getState(Status &msg); //gets and changes appropriate state based on agent status
 
+    bool amIFine(); //Checks if the agent has gained security from their current state
+    bool inDanger(); //Checks if agent is in danger due to a low stat value
+    bool canISocial(); //Checks if agent has the resources to socialize (money, fullness etc)
+    bool isAnythingLow(Status &msg); //Retrieves the next appropriate state
 
-
-    bool amIFine();
-    bool inDanger();
-    bool canISocial();
-    bool isAnythingLow(Status &msg);
-
-    bool compareStatusType();
+    bool compareStatusType(); //Compares status and type to see if agent is in the correct state
 
     void setCanSocial(bool value);
     void setPhone(Telegram* t);
-    void setClock(StepManager* h);
-    
-    int* getMainStatValues();
-    char* getState();
-    char* getMoneyChar();
+    void setClock(StepManager* h);  
     void sendMessage(std::string msg);
 };

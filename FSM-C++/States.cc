@@ -6,16 +6,16 @@ State::State()
     //3 represents taking 16 hours for stat to fill (Increase by 8000)
     //Multiplying it decreases the time it would take, example: 3 * 2 would take 8 hours, 3 * 8 would take 2 hours
     //Dividing it increases the time it would take, example: 3 / 2 would take 16 hours
-    energyChangeVal = 0.9375f; //90 energy / 16 hours = 5.625 => 5.625 / 6 = 0.9375
-    statChangeVal = 5.f;
+    this->energyChangeVal = 0.9375f; //90 energy / 16 hours = 5.625 => 5.625 / 6 = 0.9375
+    this->statChangeVal = 5.f;
 }
 
 void Drink::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(-energyChangeVal);
-    agent->changeHunger(-statChangeVal * 0.5f);
-    agent->changeThirst(statChangeVal * 20);
+    agent->changeEnergy(-this->energyChangeVal);
+    agent->changeHunger(-this->statChangeVal * 0.5f);
+    agent->changeThirst(this->statChangeVal * 20);
     agent->counter++;
 }
 void Drink::Enter(Agent* agent)
@@ -34,10 +34,10 @@ void Drink::Exit(Agent* agent)
 void Eat::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(-energyChangeVal);
-    agent->changeHunger(statChangeVal * 10);
-    agent->changeThirst(statChangeVal * 10);
-    agent->changeHappiness(statChangeVal * 0.2f);
+    agent->changeEnergy(-this->energyChangeVal);
+    agent->changeHunger(this->statChangeVal * 10);
+    agent->changeThirst(this->statChangeVal * 10);
+    agent->changeHappiness(this->statChangeVal * 0.2f);
     agent->counter++;
 }
 void Eat::Enter(Agent* agent)
@@ -48,7 +48,7 @@ void Eat::Enter(Agent* agent)
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     //Busy prevents function calls to change states
     //Pay for food
-    agent->changeMoney(-25);
+    agent->changeMoney(-50);
     agent->counter = 0;
 }
 
@@ -60,11 +60,11 @@ void Eat::Exit(Agent* agent)
 void Gather::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(-energyChangeVal);
-    agent->changeHunger(-statChangeVal * 0.5f);
-    agent->changeThirst(-statChangeVal * 2);
-    agent->changeMoney(statChangeVal);
-    agent->changeHappiness(-statChangeVal * 0.02f);
+    agent->changeEnergy(-this->energyChangeVal);
+    agent->changeHunger(-this->statChangeVal * 0.5f);
+    agent->changeThirst(-this->statChangeVal * 2);
+    agent->changeMoney(this->statChangeVal);
+    agent->changeHappiness(-this->statChangeVal * 0.02f);
     agent->counter++;
 }
 void Gather::Enter(Agent* agent)
@@ -85,12 +85,12 @@ void Gather::Exit(Agent* agent)
 void Idle::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(-energyChangeVal);
-    agent->changeHunger(-statChangeVal * 0.5f);
-    agent->changeThirst(-statChangeVal * 1.5f);
-    agent->changeHappiness(-statChangeVal * 0.05f);
-    agent->changeMoney(-5);
-    agent->counter++;
+    agent->changeEnergy(-this->energyChangeVal);
+    agent->changeHunger(-this->statChangeVal * 0.5f);
+    agent->changeThirst(-this->statChangeVal * 1.5f);
+    agent->changeHappiness(-this->statChangeVal * 0.05f);
+    agent->changeMoney(-10);
+    agent->counter++; 
 }
 void Idle::Enter(Agent* agent)
 {
@@ -110,11 +110,11 @@ void Idle::Exit(Agent* agent)
 void Mining::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeEnergy(-energyChangeVal);
-    agent->changeHunger(-statChangeVal * 0.5f);
-    agent->changeThirst(-statChangeVal);
-    agent->changeMoney(statChangeVal * 4);
-    agent->changeHappiness(-statChangeVal * 0.2f);
+    agent->changeEnergy(-this->energyChangeVal);
+    agent->changeHunger(-this->statChangeVal * 0.5f);
+    agent->changeThirst(-this->statChangeVal);
+    agent->changeMoney(this->statChangeVal * 2);
+    agent->changeHappiness(-this->statChangeVal * 0.2f);
     agent->counter++;
 }
 void Mining::Enter(Agent* agent)
@@ -163,12 +163,12 @@ void Mining::Exit(Agent* agent)
 void Social::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeHappiness(statChangeVal * 2);
+    agent->changeHappiness(this->statChangeVal * 2);
     //Busy prevents function calls to change states
-    agent->changeMoney(-10);
-    agent->changeEnergy(-energyChangeVal);
-    agent->changeHunger(statChangeVal * 4);
-    agent->changeThirst(statChangeVal * 8);
+    agent->changeMoney(-25);
+    agent->changeEnergy(-this->energyChangeVal);
+    agent->changeHunger(this->statChangeVal * 4);
+    agent->changeThirst(this->statChangeVal * 8);
     agent->counter++;
 }
 void Social::Enter(Agent* agent)
@@ -179,7 +179,7 @@ void Social::Enter(Agent* agent)
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     //Busy prevents function calls to change states
     agent->changeMoney(-50);
-    agent->changeHappiness(statChangeVal * 3.f);
+    agent->changeHappiness(this->statChangeVal * 3.f);
     
     agent->counter = 0;
     std::cout << agent->name << " enterered social" << std::endl;
@@ -194,9 +194,9 @@ void Sleep::Execute(Agent* agent)
 {
     //Change stat variables
     //Busy prevents function calls to change states
-    agent->changeHunger(-statChangeVal * 0.01f);
-    agent->changeThirst(-statChangeVal * 0.01f);
-    agent->changeEnergy(energyChangeVal * 2.f);
+    agent->changeHunger(-this->statChangeVal * 0.01f);
+    agent->changeThirst(-this->statChangeVal * 0.01f);
+    agent->changeEnergy(this->energyChangeVal * 2.f);
     agent->counter++;
 }
 void Sleep::Enter(Agent* agent)
@@ -221,6 +221,9 @@ void Dead::Enter(Agent* agent)
 {
     
     agent->type = Type::Dead;
+    agent->location = (Location::Graveyard);
+    int posFromLoc = static_cast<int>(agent->location);
+    agent->position = LocationC::getCoords(posFromLoc, agent->id);
     agent->counter = 0;
 }
 

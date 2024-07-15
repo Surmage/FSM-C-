@@ -43,10 +43,15 @@ int main() {
 	window.setFramerateLimit(60);
 	ImGui::SFML::Init(window);
 
+	srand(time(NULL));
 	std::vector<sf::RectangleShape>agentShapes;
 	for (int i = 0; i < 4; i++) {
+		float r1 = (rand() % 255) - 1.f;
+		float r2 = (rand() % 255) - 1.f;
+		float r3 = (rand() % 255) - 1.f;
+
 		sf::RectangleShape shape(sf::Vector2f(50.f, 50.f));
-		shape.setFillColor(sf::Color::Red);
+		shape.setFillColor(sf::Color(fabsf(r1), fabsf(r2), fabsf(r3)));
 		shape.setPosition(sf::Vector2f(100, 100));
 		agentShapes.push_back(shape);
 	}
@@ -58,6 +63,7 @@ int main() {
 		locations.push_back(loc);
 
 		sf::CircleShape shape(100.f);
+		std::cout << "Shape size: " << shape.getRadius();
 		shape.setFillColor(sf::Color::White);
 		shape.setPosition(loc);
 		shapes.push_back(shape);
@@ -70,30 +76,36 @@ int main() {
 		// error...
 	}
 	std::vector<sf::Text>texts;
-	sf::Text text;
-	text.setString("Hello");
-	text.setFont(font);
-	text.setCharacterSize(24);
-	text.setFillColor(sf::Color::Green);
-	text.setPosition(50,10);
-	texts.push_back(text);
+	{
+		sf::Text agentText;
+		agentText.setString("Hello");
+		agentText.setPosition(900, 10);
+		texts.push_back(agentText);
 
-	sf::Text timeText;
-	timeText.setString("Hello");
-	timeText.setFont(font);
-	timeText.setCharacterSize(24);
-	timeText.setFillColor(sf::Color::White);
-	timeText.setPosition(300, 10);
-	texts.push_back(timeText);
+		sf::Text timeText;
+		timeText.setString("Hello");
+		timeText.setPosition(300, 10);
+		texts.push_back(timeText);
 
-	sf::Text chat;
-	chat.setString("");
-	chat.setFont(font);
-	chat.setCharacterSize(24);
-	chat.setFillColor(sf::Color::Green);
-	chat.setPosition(400, 400);
-	texts.push_back(chat);
+		sf::Text chat;
+		chat.setString("");
+		chat.setPosition(900, 400);
+		texts.push_back(chat);
 
+		sf::Text mines, home, restaurant, bar, field, graveyard;
+		mines.setString("MINES"); home.setString("HOME"); restaurant.setString("RESTAURANT");
+		bar.setString("BAR"); field.setString("FIELD"); graveyard.setString("GRAVEYARD");
+		
+		texts.push_back(mines); texts.push_back(home); texts.push_back(restaurant);
+		texts.push_back(bar); texts.push_back(field); texts.push_back(graveyard);
+
+		for (int i = 0; i < texts.size(); i++) {
+			texts[i].setFont(font);
+			texts[i].setCharacterSize(24);
+			texts[i].setFillColor(sf::Color::Green);
+		}
+
+	}
 
 
 	sf::Clock deltaClock;
@@ -116,20 +128,6 @@ int main() {
 	
 	while (window.isOpen()) {
 		
-		elapsed = deltaClock.getElapsedTime() - start;
-		if (!isPaused) {
-			//Update agents
-			agents[0].Update(sm.getHour());
-			agents[1].Update(sm.getHour());
-			agents[2].Update(sm.getHour());
-			agents[3].Update(sm.getHour());
-			//t.printAgentStats();
-			sf::sleep(sf::milliseconds(500 / speed));
-			sm.step = step;
-			step++;
-			
-		}
-		
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			ImGui::SFML::ProcessEvent(window, event);
@@ -143,6 +141,66 @@ int main() {
 					if (event.key.code == sf::Keyboard::Space)
 					{
 						isPaused = !isPaused;
+					}
+					else if (event.key.code == sf::Keyboard::Num0 || 
+						event.key.code == sf::Keyboard::Numpad0)
+					{
+						isPaused = !isPaused;
+					}
+					else if (event.key.code == sf::Keyboard::Num1 ||
+						event.key.code == sf::Keyboard::Numpad1)
+					{
+						speed = 1;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num2 ||
+						event.key.code == sf::Keyboard::Numpad2)
+					{
+						speed = 2;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num3 ||
+						event.key.code == sf::Keyboard::Numpad3)
+					{
+						speed = 3;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num4 ||
+						event.key.code == sf::Keyboard::Numpad4)
+					{
+						speed = 4;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num5 ||
+						event.key.code == sf::Keyboard::Numpad5)
+					{
+						speed = 5;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num6 ||
+						event.key.code == sf::Keyboard::Numpad6)
+					{
+						speed = 6;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num7 ||
+						event.key.code == sf::Keyboard::Numpad7)
+					{
+						speed = 7;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num8 ||
+						event.key.code == sf::Keyboard::Numpad8)
+					{
+						speed = 8;
+						isPaused = false;
+					}
+					else if (event.key.code == sf::Keyboard::Num9 ||
+						event.key.code == sf::Keyboard::Numpad9)
+					{
+						speed = 9;
+						isPaused = false;
+						
 					}
 
 					break;
@@ -159,9 +217,22 @@ int main() {
 					break;		
 			}
 		}
+
+		elapsed = deltaClock.getElapsedTime() - start;
+		if (!isPaused) {
+			//Update agents
+			agents[0].Update(sm.getHour());
+			agents[1].Update(sm.getHour());
+			agents[2].Update(sm.getHour());
+			agents[3].Update(sm.getHour());
+			//t.printAgentStats();
+			sf::sleep(sf::milliseconds(500 / speed));
+			sm.step = step;
+			step++;
+
+		}
+
 		ImGui::SFML::Update(window, deltaClock.getElapsedTime());
-		
-		//ImGui::ShowDemoWindow();
 		ImGui::Begin("Hello, world!");
 		ImGui::Checkbox("Pause", &isPaused);
 		ImGui::SliderInt("speed", &speed, 0, 10);
@@ -174,7 +245,7 @@ int main() {
 				agents[3].Update(sm.getHour());
 				prevStep = step--;
 				sm.step = step;
-				std::cout << std::string(1, (static_cast<char>(agents[0].type))) << std::endl;
+				//std::cout << std::string(1, (static_cast<char>(agents[0].type))) << std::endl;
 			}
 			ImGui::BeginChild("Agent A", ImVec2(0, 0), true,
 				ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
@@ -203,6 +274,11 @@ int main() {
 			" Minute: " + std::to_string(sm.getMinute()));
 
 		texts[2].setString(t.getMessageChat());
+
+		for (int i = 3; i < texts.size(); i++) {
+			texts[i].setPosition(sf::Vector2f(shapes[i - 3].getPosition().x,
+				shapes[i - 3].getPosition().y + (shapes[i - 3].getRadius() * 2)));
+		}
 		
 		window.clear();
 		for (int i = 0; i < shapes.size(); i++) {

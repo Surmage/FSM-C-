@@ -13,78 +13,74 @@ Agent::Stats::Stats() {
 }
 
 Agent::Agent() {
-    stats.fullness = 100;
-    stats.thirst = 100;
-    stats.energy = 100;
-    stats.happiness = 100;
-    stats.money = 100;
-    status = Status::Sleepy;
+    this->stats.fullness = 100;
+    this->stats.thirst = 100;
+    this->stats.energy = 100;
+    this->stats.happiness = 100;
+    this->stats.money = 100;
+    this->status = Status::Sleepy;
     this->location = (Location::Home);
     int posFromLoc = static_cast<int>(this->location);
     this->position = LocationC::getCoords(posFromLoc, id);
-    phone = nullptr;
-    clock = nullptr;
-    s = NULL;
-    enterState();
-    type = Type::Sleeping;
-    prevType = type;
-    date = std::make_tuple(NULL, this);
-    timesAskedForHelp = 0;
-    hour = 0;
-    canSocial = true;
-    needRepair = false;
-    counter = 0;
-    workCounter = 0;
-    goBackToWork = false;
+    this->phone = nullptr;
+    this->clock = nullptr;
+    this->s = NULL;
+    this->enterState();
+    this->type = Type::Sleeping;
+    this->date = std::make_tuple(NULL, this);
+    this->timesAskedForHelp = 0;
+    this->hour = 0;
+    this->canSocial = true;
+    this->needRepair = false;
+    this->counter = 0;
+    this->workCounter = 0;
+    this->goBackToWork = false;
 }
 
 Agent::Agent(std::string name, int id) {
     this->name = name;
     this->id = id;
-    timesAskedForHelp = 0;
-    canSocial = true;
-    needRepair = false;
+    this->timesAskedForHelp = 0;
+    this->canSocial = true;
+    this->needRepair = false;
     //randomize start values
-    float startValue1 = 50.f + rand() % 50; //random between 4000 and 8000
-    float startValue2 = 50.f;
-    float startValue3 = 50.f + rand() % 50;
-    stats.fullness = startValue1;
-    stats.thirst = startValue1;
-    stats.energy = 1;
-    stats.money = startValue3;
-    stats.happiness = startValue3;
-    status = Status::Sleepy; //start program asleep
+    float startValue1 = 50.f + rand() % 50; //random between 50 and 100
+    float startValue2 = 50.f + rand() % 50;
+    this->stats.fullness = startValue1;
+    this->stats.thirst = startValue1;
+    this->stats.energy = 1;
+    this->stats.money = startValue2;
+    this->stats.happiness = startValue2;
+    this->status = Status::Sleepy; //start program asleep
     this->location = (Location::Home);
     int posFromLoc = static_cast<int>(this->location);
     this->position = LocationC::getCoords(posFromLoc, id);
-    phone = nullptr;
-    clock = nullptr;
-    s = NULL;
-    enterState();
-    type = Type::Sleeping;
-    prevType = type;
-    date = std::make_tuple(NULL, this);
-    hour = 0;
-    counter = 0;
-    workCounter = 0;
-    goBackToWork = false;
+    this->phone = nullptr;
+    this->clock = nullptr;
+    this->s = NULL;
+    this->enterState();
+    this->type = Type::Sleeping;
+    this->date = std::make_tuple(NULL, this);
+    this->hour = 0;
+    this->counter = 0;
+    this->workCounter = 0;
+    this->goBackToWork = false;
 }
 
 void Agent::Update(int cHour)
 {
-    if (type == Type::Dead)
+    if (this->type == Type::Dead)
         return;
 
-    if (stats.fullness <= 0 || stats.thirst <= 0) //agent dies if too thirsty or hungry
+    if (this->stats.fullness <= 0 || this->stats.thirst <= 0) //agent dies if too thirsty or hungry
     {
         if (status != Status::Dead)
         {
-            sendMessage(name + " died.");
-            //std::cout << type << std::endl;
+            this->sendMessage(name + " died.");
             delete s;
-            status = Status::Dead;
-            s = getState(status);
-            s->Enter(this);
+            this->status = Status::Dead;
+            this->s = getState(status);
+            this->s->Enter(this);
             return;
         }
     }
@@ -92,127 +88,122 @@ void Agent::Update(int cHour)
     else if (stats.energy <= 0) //pass out
     {
         //busy prevents certain function calls
-        changeHunger(-15);
-        changeThirst(-15);
-        changeMoney(-50);
-        sendMessage(name + " passed out.");
+        this->changeHunger(-15);
+        this->changeThirst(-15);
+        this->changeMoney(-50);
+        this->sendMessage(name + " passed out.");
     }
 
     this->hour = cHour;
-    if (hour == 22) //if it's too late at night
+    if (this->hour == 22) //if it's too late at night
     {
         //canSocial = false;
-        goBackToWork = false;
+        this->goBackToWork = false;
     }
-    if (hour == 6 && !canSocial) //if agent has woken up
+    if (this->hour == 6 && !this->canSocial) //if agent has woken up
     {
-        canSocial = true;
+        this->canSocial = true;
     }
    
     //keeping the stats in check, between 0 and 8000
 
-    if (stats.fullness < 0)
+    if (this->stats.fullness < 0)
     {
-        stats.fullness = 0;
+        this->stats.fullness = 0;
     }
-    if (stats.fullness > stats.maxFullness)
+    if (this->stats.fullness > this->stats.maxFullness)
     {
-        stats.fullness = stats.maxFullness;
+        this->stats.fullness = this->stats.maxFullness;
     }
-    if (stats.thirst < 0)
+    if (this->stats.thirst < 0)
     {
-        stats.thirst = 0;
+        this->stats.thirst = 0;
     }
-    if (stats.thirst > stats.maxThirst)
+    if (this->stats.thirst > this->stats.maxThirst)
     {
-        stats.thirst = stats.maxThirst;
+        this->stats.thirst = this->stats.maxThirst;
     }
-    if (stats.energy < 0)
+    if (this->stats.energy < 0)
     {
-        stats.energy = 0;
+        this->stats.energy = 0;
     }
-    if (stats.energy > stats.maxEnergy)
+    if (this->stats.energy > this->stats.maxEnergy)
     {
-        stats.energy = stats.maxEnergy;
+        this->stats.energy = this->stats.maxEnergy;
     }
-    if (stats.happiness <= 0)
+    if (this->stats.happiness <= 0)
     {
-        stats.happiness = 0;
+        this->stats.happiness = 0;
     }
-    if (stats.happiness > stats.maxHappiness)
+    if (this->stats.happiness > this->stats.maxHappiness)
     {
-        stats.happiness = stats.maxHappiness;
+        this->stats.happiness = this->stats.maxHappiness;
     } 
 
-    //type = s->type;
-    s->Execute(this); //call stat changing function
-    if (goBackToWork && checkCanEnter(status))
+    this->s->Execute(this); //call stat changing function
+    if (this->goBackToWork && this->checkCanEnter())
     {
-        status = Status::Poor;
-        enterState();
+        this->status = Status::Poor;
+        this->enterState();
         return;
     }
 
     //start socializing if the time for the date has arrived
-    if (std::get<0>(date) == hour && std::get<1>(date)->name != this->name && canSocial && type != Type::Socializing) {
-        startToSocial();
+    if (std::get<0>(this->date) == this->hour && 
+        std::get<1>(this->date)->name != this->name &&
+        this->canSocial && this->type != Type::Socializing)
+    {
+        this->startToSocial();
         return;
     }
-    if (amIFine() || inDanger()) {
-        checkShouldEnter();
+    if (this->amIFine() || this->inDanger()) {
+        this->checkShouldEnter();
     }     
 }
     void Agent::changeHunger(float change)
     {
-        if (stats.fullness >= 0 && stats.fullness <= stats.maxFullness)
-        {
-            {
-                    stats.fullness += change;       
-            }
+        if (this->stats.fullness >= 0 && this->stats.fullness <= this->stats.maxFullness)
+        {            
+            this->stats.fullness += change;
         }
     }
     void Agent::changeThirst(float change)
     {
-        if (stats.thirst >= 0 && stats.thirst <= stats.maxThirst)
-        {
-            {
-                    stats.thirst += change;
-            }           
+        if (this->stats.thirst >= 0 && this->stats.thirst <= this->stats.maxThirst)
+        {            
+            this->stats.thirst += change;
         }
     }
     void Agent::changeEnergy(float change)
     {
-        if (stats.energy >= 0 && stats.energy <= stats.maxEnergy)
-        {
-                stats.energy += change;
-       
-        }
+        if (this->stats.energy >= 0 && this->stats.energy <= this->stats.maxEnergy)
+        
+            this->stats.energy += change;
+        
     }
     void Agent::changeMoney(float change)
     {
-            stats.money += change;      
-
+        //No limits, debt exists
+        this->stats.money += change;
     }
     void Agent::changeHappiness(float change)
     {
-            stats.happiness += change;
-        
+        this->stats.happiness += change;
     }
 
     void Agent::checkShouldEnter()
-    {
-        
-        isAnythingLow(status);
-        if (!compareStatusType()) //Check if already in state
+    {        
+        this->isAnythingLow(status);
+        if (!this->compareStatusType()) //Check if already in state
         {
-            if(checkCanEnter(status)) //Check if switching state is appropriate
-                enterState();
+            if(this->checkCanEnter()) //Check if switching state is appropriate
+                this->enterState();
         }
     }
 
-    bool Agent::checkCanEnter(Status& status) {
-        //std::cout << hour << std::endl;
-        //Check if state main stat is high enough to exit
+    bool Agent::checkCanEnter() {
+        //Check if state counter and stats are sufficient for pivoting
+
         if (type == Type::Drinking)
         {
             return true;
@@ -253,7 +244,8 @@ void Agent::Update(int cHour)
         }
         else if (type == Type::Socializing)
         {
-            if (stats.happiness >= stats.maxHappiness * 0.9f || std::get<1>(date)->stats.happiness >= stats.maxHappiness * 0.9f)
+            if (stats.happiness >= stats.maxHappiness * 0.9f || 
+                std::get<1>(date)->stats.happiness >= stats.maxHappiness * 0.9f)
             {
                 return true;
             }
@@ -367,7 +359,6 @@ void Agent::Update(int cHour)
         }
         return s;
     }
-
     
     bool Agent::amIFine()
     {
@@ -683,21 +674,6 @@ void Agent::Update(int cHour)
         clock = h;
     }
    
-    int* Agent::getMainStatValues() {
-        int arr[4] = { (int)stats.fullness, (int)stats.thirst, (int)stats.energy, (int)stats.happiness};
-        return arr;
-    }
-    char* Agent::getState() {
-        char buf[100];
-        //sprintf(buf, "State: %s", type.c_str());
-        return buf;
-    }
-    char* Agent::getMoneyChar() {
-        char buf[20];      
-        sprintf_s(buf, "Money: %i", (int)stats.money);
-        return buf;
-
-    }
     void Agent::sendMessage(std::string msg) {
         phone->updateMessageText(msg);
     }   

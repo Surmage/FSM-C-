@@ -20,8 +20,8 @@ enum struct Type : char
 
 struct State
 {
-    float energyChangeVal;
-    float statChangeVal;
+    float energyChangeVal; //Drains during the day, regains while sleeping
+    float statChangeVal; //Used for other stats than energy
 
     State();
 
