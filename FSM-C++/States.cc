@@ -37,7 +37,7 @@ void Eat::Execute(Agent* agent)
     agent->changeEnergy(-this->energyChangeVal);
     agent->changeHunger(this->statChangeVal * 10);
     agent->changeThirst(this->statChangeVal * 10);
-    agent->changeHappiness(this->statChangeVal * 0.2f);
+    agent->changeHappiness(this->statChangeVal * 0.1f);
     agent->counter++;
 }
 void Eat::Enter(Agent* agent)
@@ -88,8 +88,8 @@ void Idle::Execute(Agent* agent)
     agent->changeEnergy(-this->energyChangeVal);
     agent->changeHunger(-this->statChangeVal * 0.5f);
     agent->changeThirst(-this->statChangeVal * 1.5f);
-    agent->changeHappiness(-this->statChangeVal * 0.05f);
-    agent->changeMoney(-10);
+    agent->changeHappiness(-this->statChangeVal * 0.02f);
+    agent->changeMoney(-5);
     agent->counter++; 
 }
 void Idle::Enter(Agent* agent)
@@ -114,7 +114,7 @@ void Mining::Execute(Agent* agent)
     agent->changeHunger(-this->statChangeVal * 0.5f);
     agent->changeThirst(-this->statChangeVal);
     agent->changeMoney(this->statChangeVal * 2);
-    agent->changeHappiness(-this->statChangeVal * 0.2f);
+    agent->changeHappiness(-this->statChangeVal * 0.1f);
     agent->counter++;
 }
 void Mining::Enter(Agent* agent)
@@ -127,7 +127,7 @@ void Mining::Enter(Agent* agent)
     {
         //Busy prevents function calls to change states
         agent->needRepair = false;
-        agent->changeMoney(-100);
+        agent->changeMoney(-300);
         agent->sendMessage(agent->name + " repaired their pickaxe.");
     }
     if (agent->goBackToWork) {
@@ -155,7 +155,6 @@ void Mining::Exit(Agent* agent)
     if (pickaxeBreakChance == 0 && !agent->goBackToWork)
     {
         agent->needRepair = true;
-        std::cout << agent->name << " pickaxe broke" << std::endl;
         agent->sendMessage(agent->name + "'s pickaxe broke.");
     }
 }
@@ -163,9 +162,9 @@ void Mining::Exit(Agent* agent)
 void Social::Execute(Agent* agent)
 {
     //Change stat variables
-    agent->changeHappiness(this->statChangeVal * 2);
+    agent->changeHappiness(this->statChangeVal);
     //Busy prevents function calls to change states
-    agent->changeMoney(-25);
+    agent->changeMoney(-15);
     agent->changeEnergy(-this->energyChangeVal);
     agent->changeHunger(this->statChangeVal * 4);
     agent->changeThirst(this->statChangeVal * 8);
@@ -179,7 +178,7 @@ void Social::Enter(Agent* agent)
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
     //Busy prevents function calls to change states
     agent->changeMoney(-50);
-    agent->changeHappiness(this->statChangeVal * 3.f);
+    agent->changeHappiness(this->statChangeVal * 2.f);
     
     agent->counter = 0;
     std::cout << agent->name << " enterered social" << std::endl;

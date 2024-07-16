@@ -95,12 +95,12 @@ void Agent::Update(int cHour)
     }
 
     this->hour = cHour;
-    if (this->hour == 22) //if it's too late at night
+    if (this->hour >= 19) //if it's too late at night
     {
-        //canSocial = false;
+        canSocial = false;
         this->goBackToWork = false;
     }
-    if (this->hour == 6 && !this->canSocial) //if agent has woken up
+    else if (this->hour == 6 && !this->canSocial) //if agent has woken up
     {
         this->canSocial = true;
     }
@@ -151,7 +151,7 @@ void Agent::Update(int cHour)
     //start socializing if the time for the date has arrived
     if (std::get<0>(this->date) == this->hour && 
         std::get<1>(this->date)->name != this->name &&
-        this->canSocial && this->type != Type::Socializing)
+        this->type != Type::Socializing)
     {
         this->startToSocial();
         return;
@@ -230,7 +230,7 @@ void Agent::Update(int cHour)
         }
         else if (type == Type::Gathering)
         {
-            if (counter >= 6 || stats.thirst <= 10 || stats.fullness <= 10 || stats.energy <= 5)
+            if (counter >= 12 || stats.thirst <= 10 || stats.fullness <= 10 || stats.energy <= 5)
             {
                 return true;
             }
@@ -276,6 +276,11 @@ void Agent::Update(int cHour)
         //Plan to socialize
         if (msg == Status::Bored)
         {
+            if (std::get<1>(date)->name != this->name) { //if a date is planned
+                State* s = NULL;
+                s = new Idle;
+                return s;
+            }
             if (this->canSocial == true && hour <= 19 && std::get<1>(date)->name == this->name)
             {
                 if (this->stats.money >= 100) //If not broke
@@ -294,13 +299,12 @@ void Agent::Update(int cHour)
                                 }
                             }
                         }
+                        canSocial = false;
                     }
                 }
             }
             //Find new state to enter
-            setCanSocial(false); //flipping canSocial is required to prevent isAnythingLow() from returning "Bored" again
             this->isAnythingLow(msg);
-            setCanSocial(true);
         }
         //Enter eat state
         if (msg == Status::Hungry)
@@ -411,7 +415,7 @@ void Agent::Update(int cHour)
             stats.fullness <= stats.maxFullness * 0.1f ||
             stats.thirst <= stats.maxThirst * 0.1f ||
             stats.happiness <= stats.maxHappiness * 0.1f ||
-            stats.money <= 25) return true;
+            stats.money <= 50) return true;
         else
             return false;
     }
@@ -474,11 +478,11 @@ void Agent::Update(int cHour)
 
         //Remove possibility of entering states if should be impossible
 
-        if (!canSocial || stats.money < 100 || std::get<1>(date)->name != this->name) //remove entering social as an option (if do have date)
+        if (!canSocial || stats.money < 150 || std::get<1>(date)->name != this->name) //remove entering social as an option (if do have date)
         {
             arrs.pop_back();
         }
-        if ((needRepair && stats.money < 100) || hour >= 15) //remove mining as an option
+        if ((needRepair && stats.money < 400) || hour >= 15) //remove mining as an option
         {
             arrs.erase(arrs.begin() + 3);
         }
@@ -663,10 +667,6 @@ void Agent::Update(int cHour)
         return false;
     }
 
-    void Agent::setCanSocial(bool value)
-    {
-        canSocial = value;
-    }
     void Agent::setPhone(Telegram* t) {
         phone = t;
     }

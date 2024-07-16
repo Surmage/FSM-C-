@@ -104,7 +104,6 @@ int main() {
 			texts[i].setCharacterSize(24);
 			texts[i].setFillColor(sf::Color::Green);
 		}
-
 	}
 
 
@@ -126,8 +125,7 @@ int main() {
 	sf::Vector2f oldPos;
 	int selectedAgent = 0;
 	
-	while (window.isOpen()) {
-		
+	while (window.isOpen()) {		
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			ImGui::SFML::ProcessEvent(window, event);
@@ -226,27 +224,18 @@ int main() {
 			agents[2].Update(sm.getHour());
 			agents[3].Update(sm.getHour());
 			//t.printAgentStats();
-			sf::sleep(sf::milliseconds(500 / speed));
+			sf::sleep(sf::milliseconds(500 - speed * 50));
 			sm.step = step;
 			step++;
 
 		}
 
 		ImGui::SFML::Update(window, deltaClock.getElapsedTime());
-		ImGui::Begin("Hello, world!");
+		ImGui::Begin("FSM");
 		ImGui::Checkbox("Pause", &isPaused);
 		ImGui::SliderInt("speed", &speed, 0, 10);
 		if (isPaused) {
-			if (ImGui::InputInt("Step", &step, 1, 1)) {
-				
-				agents[0].Update(sm.getHour());
-				agents[1].Update(sm.getHour());
-				agents[2].Update(sm.getHour());
-				agents[3].Update(sm.getHour());
-				prevStep = step--;
-				sm.step = step;
-				//std::cout << std::string(1, (static_cast<char>(agents[0].type))) << std::endl;
-			}
+			
 			ImGui::BeginChild("Agent A", ImVec2(0, 0), true,
 				ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
 			ImGui::SliderFloat("Energy", &agents[selectedAgent].stats.energy, 0, 100);

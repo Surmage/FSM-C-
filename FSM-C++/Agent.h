@@ -85,8 +85,6 @@ struct Agent
     bool isAnythingLow(Status &msg); //Retrieves the next appropriate state
 
     bool compareStatusType(); //Compares status and type to see if agent is in the correct state
-
-    void setCanSocial(bool value);
     void setPhone(Telegram* t);
     void setClock(StepManager* h);  
     void sendMessage(std::string msg);

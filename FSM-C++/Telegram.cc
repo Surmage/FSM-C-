@@ -51,8 +51,6 @@ bool Telegram::askForMoney(Agent* caller)
 std::string Telegram::dispatchMessage(Agent* receiver)
 {
     std::string msg;
-    std::cout << receiver->name << " Money:" << receiver->stats.money 
-        << " Energy: " << receiver->stats.energy << std::endl;
     //If friend can social
     if (receiver->stats.money >= 100 && receiver->canISocial() && receiver->type != Type::Dead)
     {
