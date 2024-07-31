@@ -36,7 +36,7 @@ StepManager::StepManager() {
     step = 0;
 }
 void StepManager::updateStep(int& increment) {
-    if(increment != -1 && step != 0)
+    if(increment > 0)
         step += increment;
 }
 int StepManager::getDay() {
@@ -50,7 +50,7 @@ int StepManager::getHour() {
     int day = getDay();
     if (day >= 1)
     {
-        hour = hour - 24 * getDay();
+        hour = hour - 24 * day;
     }
     return hour;
 }
@@ -60,5 +60,5 @@ int StepManager::getMinute() {
     float hour = step / 6 - 24 * getDay();
     float min = hour - roundedHour;
     min = 60 * min;
-    return (int)min;
+    return (min > 0.0) ? (min + 0.5) : (min - 0.5); //rounded up/down
 }

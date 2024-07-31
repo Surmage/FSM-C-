@@ -526,7 +526,7 @@ void Agent::Update(int cHour)
             {
                 // 20% chance to go mining, 40% chance to go gathering, 40% chance to go idle
                 int mood = rand() % 5;
-                if (mood == 4)
+                if ((mood == 4 && !needRepair) || (mood == 4 && needRepair && stats.money >= 400))
                 {
                     if (status != Status::Poor)
                     {

@@ -35,11 +35,11 @@ bool Telegram::askForMoney(Agent* caller)
     {
         if (caller->name != getAgent(i)->name) //To avoid asking themselves for money
         {
-            if (getAgent(i)->stats.money >= 100 && getAgent(i)->type != Type::Sleeping && getAgent(i)->type != Type::Dead)
+            if (getAgent(i)->stats.money >= 200 && getAgent(i)->type != Type::Sleeping && getAgent(i)->type != Type::Dead)
             {
                 //"busy" being true prevents the state from being changed
-                getAgent(i)->changeMoney(-50); //friend hands over money
-                caller->changeMoney(50); //caller receives friends money
+                getAgent(i)->changeMoney(-100); //friend hands over money
+                caller->changeMoney(100); //caller receives friends money
                 caller->changeHappiness(50); //caller is happy to have been helped
                 updateMessageText(caller->name + " received money from " + getAgent(i)->name);
                 return true;
@@ -64,7 +64,7 @@ std::string Telegram::dispatchMessage(Agent* receiver)
     //If friend can't for another reason
     else
     {
-        msg = "Can't because I am" + static_cast<char>(receiver->type);
+        msg = "Can't because I am " + static_cast<char>(receiver->type);
 
     }
     return msg;
@@ -78,7 +78,7 @@ void Telegram::updateMessageText(std::string msg)
     chat += "\n" + msg;
     int count = 0; //Count for new lines
 
-    std::string buf; //Buffer used to 
+    std::string buf; //Buffer 
     for (int i = 0;  i < chat.length(); i++) {
         if (chat[i] == '\n') { //Add to count for each new line
             count++;
@@ -93,6 +93,5 @@ void Telegram::updateMessageText(std::string msg)
     if (count > 7) { 
         //Chat array is set to buf
         chat = buf;
-        //sprintf(chat, "Chat:\n %s", buf);
     }
 }

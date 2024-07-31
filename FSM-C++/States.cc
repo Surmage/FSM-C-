@@ -46,7 +46,6 @@ void Eat::Enter(Agent* agent)
     agent->location = (Location::Restaurant);
     int posFromLoc = static_cast<int>(agent->location);
     agent->position = LocationC::getCoords(posFromLoc, agent->id);
-    //Busy prevents function calls to change states
     //Pay for food
     agent->changeMoney(-50);
     agent->counter = 0;

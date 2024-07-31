@@ -44,6 +44,8 @@ int main() {
 	ImGui::SFML::Init(window);
 
 	srand(time(NULL));
+
+	//Shapes to represent the agents
 	std::vector<sf::RectangleShape>agentShapes;
 	for (int i = 0; i < 4; i++) {
 		float r1 = (rand() % 255) - 1.f;
@@ -63,13 +65,11 @@ int main() {
 		locations.push_back(loc);
 
 		sf::CircleShape shape(100.f);
-		std::cout << "Shape size: " << shape.getRadius();
 		shape.setFillColor(sf::Color::White);
 		shape.setPosition(loc);
 		shapes.push_back(shape);
 	}
 
-	//rect.setFillColor(sf::Color::Green);
 	sf::Font font;
 	if (!font.loadFromFile("tahoma.ttf"))
 	{
@@ -113,14 +113,14 @@ int main() {
 	float frames = 0;
 	int i = 0;
 	bool isPaused = true;
-	int speed = 1;
+	int speed = 0;
 	sf::Time start;
 	sf::Time elapsed;
 	start = deltaClock.getElapsedTime();
 	
 	srand((unsigned)time(NULL));
 
-	sm.step = 8;
+	sm.step = 0;
 	int step = 0;
 	sf::Vector2f oldPos;
 	int selectedAgent = 0;
@@ -136,6 +136,11 @@ int main() {
 					window.close();
 					break;
 				case sf::Event::KeyPressed:
+					if (event.key.code == sf::Keyboard::Escape) {
+						window.close();
+						break;
+					}						
+
 					if (event.key.code == sf::Keyboard::Space)
 					{
 						isPaused = !isPaused;
@@ -204,9 +209,12 @@ int main() {
 					break;
 				case sf::Event::MouseButtonPressed:
 					if (event.mouseButton.button == sf::Mouse::Left) {
+						//Get mouse position
 						oldPos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+						//Find agent at mouse position
 						for (int i = 0; i < agentShapes.size(); i++) {
 							if (agentShapes[i].getGlobalBounds().contains(oldPos)) {
+								//Select that agent through its index
 								selectedAgent = i;
 								break;
 							}
@@ -223,32 +231,26 @@ int main() {
 			agents[1].Update(sm.getHour());
 			agents[2].Update(sm.getHour());
 			agents[3].Update(sm.getHour());
-			//t.printAgentStats();
 			sf::sleep(sf::milliseconds(500 - speed * 50));
 			sm.step = step;
 			step++;
 
 		}
-
+		//Imgui stuff
 		ImGui::SFML::Update(window, deltaClock.getElapsedTime());
 		ImGui::Begin("FSM");
 		ImGui::Checkbox("Pause", &isPaused);
-		ImGui::SliderInt("speed", &speed, 0, 10);
+		ImGui::SliderInt("Speed incr", &speed, 0, 10);
 		if (isPaused) {
-			
-			ImGui::BeginChild("Agent A", ImVec2(0, 0), true,
-				ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+			ImGui::Dummy(ImVec2(0.0f, 20.0f));
 			ImGui::SliderFloat("Energy", &agents[selectedAgent].stats.energy, 0, 100);
 			ImGui::SliderFloat("Fullness", &agents[selectedAgent].stats.fullness, 0, 100);
 			ImGui::SliderFloat("Happiness", &agents[selectedAgent].stats.happiness, 0, 100);
 			ImGui::SliderFloat("Thirst", &agents[selectedAgent].stats.thirst, 0, 100);
-			ImGui::SliderFloat("Money", &agents[selectedAgent].stats.money, 0, 100);
-			ImGui::EndChild();
+			ImGui::InputFloat("Money", &agents[selectedAgent].stats.money);		
 		}
 		
 		ImGui::End();
-
-		//std::cout << isPaused << std::endl;
 		
 		texts[0].setString((std::string(1, (static_cast<char>(agents[selectedAgent].type)))) + "\n" +
 			"Energy: " + std::to_string(agents[selectedAgent].stats.energy) + "\n" +
